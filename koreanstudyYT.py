@@ -4,8 +4,6 @@ import os
 #from google.cloud import storage
 import pandas as pd
 from googleapiclient.discovery import build
-import os
-from dotenv import load_dotenv
 from youtube_transcript_api import YouTubeTranscriptApi
 from youtube_transcript_api._errors import TranscriptsDisabled, NoTranscriptAvailable, NoTranscriptFound
 import hashlib
@@ -53,31 +51,15 @@ def load_csv_data():
         return df, lesson_list
     except Exception as e:
         st.error(f"Error loading CSV file: {e}")
-        return None, [], [], {}
+        return None, []
 
 df, lesson_list = load_csv_data()
 
 
+API_KEY = st.secrets["youtube_api"]["key"]
 
-
-
-# Load environment variables
-load_dotenv()
-
-# Get API key from environment variable
-API_KEY = os.getenv("YOUTUBE_API_KEY")
 youtube = build('youtube', 'v3', developerKey=API_KEY)
 translator = Translator()
-
-# def check_api_key():
-#     if API_KEY:
-#         st.success("YouTube API key loaded successfully!")       
-#     else:
-#         st.error("YouTube API key not found. Please check your environment variables.")
-
-# # Call this function early in your app
-# check_api_key()
-
 
 
 # Define the channel IDs
@@ -87,8 +69,6 @@ CHANNEL_IDS = [
     "UCaKod3X1Tn4c7Ci0iUKcvzQ",  # SBS Running Man
     
 ]
-
-
 
 
 @st.cache_data(ttl=86400)
