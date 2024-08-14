@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-import pandas as pd
 from googleapiclient.discovery import build
 from youtube_transcript_api import YouTubeTranscriptApi
 from youtube_transcript_api._errors import TranscriptsDisabled, NoTranscriptAvailable, NoTranscriptFound
@@ -60,12 +59,9 @@ def get_lesson_link(lesson):
         return None, None
 
 # Load API key from Streamlit secrets into environment variable
-import os
-os.environ['youtube_api'] = st.secrets['youtube_api']
-
 # Initialize YouTube API client
 try:
-    API_KEY = os.environ['youtube_api']
+    API_KEY = st.secrets['youtube_api']
     youtube = build('youtube', 'v3', developerKey=API_KEY)
     logger.info("YouTube API client initialized successfully")
     #st.write("YouTube API client initialized successfully")
@@ -83,7 +79,7 @@ CHANNEL_IDS = [
      
     "UCAmia3u27mHY-Y6c-lwakAQ",  # Pororo
     "UCaKod3X1Tn4c7Ci0iUKcvzQ",  # SBS Running Man
-    
+    "UC920m3pMPH45qztdhppZhwA"   # youquizontheblock
 ]
 
 
