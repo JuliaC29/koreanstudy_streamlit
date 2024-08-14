@@ -201,14 +201,13 @@ def youtube_search_tab():
                             video_url = f"https://www.youtube.com/embed/{video_id}?start={int(start_time)}"
                             st.video(video_url)
                             st.write(f"**[{formatted_time}]** {text}")
-                            st.write(f"Translation: {english_translation}")
-                                
+                            st.write(f"Translation: {translate_text(text)}")
                             found_videos += 1
                 if found_videos == 0:
                     st.write("No videos with matching captions found. Try a different search term.")
             except Exception as e:
                 logger.error(f"Error in YouTube search: {str(e)}")
-                st.error("An error occurred during the search. Please try again later.")
+                st.error(f"An error occurred during the search: {str(e)}")
         else:
             st.write("Please enter a search term.")
 
