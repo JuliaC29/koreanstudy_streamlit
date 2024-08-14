@@ -204,10 +204,12 @@ def youtube_search_tab():
                             st.write(f"### {title}")
                             st.write(f"Channel: {channel_title}")
                             st.write(f"**[{formatted_time}]** {text}")
-                            english_translation = translate_text(text)
-                            st.write(f"Translation: {english_translation}")
+                            
                             timestamp, text = matches[0]  # Only use the first match
                             formatted_time = format_time(timestamp)
+                            english_translation = translate_text(text)
+                            st.write(f"Translation: {english_translation}")
+                            
                             st.video(f"https://www.youtube.com/watch?v={video_id}&t={int(timestamp)}s")
                             
                             found_videos += 1
