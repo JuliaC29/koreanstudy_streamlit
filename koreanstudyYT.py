@@ -204,9 +204,11 @@ def youtube_search_tab():
                             st.write(f"Channel: {channel_title}")
                             start_time, end_time, text = matches[0]  # Only use the first match
                             formatted_time = format_time(start_time)
-                            # Embed video with the start time
-                            video_url = f"https://www.youtube.com/embed/{video_id}?start={int(start_time)}"
+                            
+                            # Use the YouTube watch URL with a start parameter for better compatibility
+                            video_url = f"https://www.youtube.com/watch?v={video_id}&t={int(start_time)}s"
                             st.video(video_url)
+                            
                             st.write(f"**[{formatted_time}]** {text}")
                             st.write(f"Translation: {translate_text(text)}")
                             found_videos += 1
@@ -217,6 +219,7 @@ def youtube_search_tab():
                 st.error(f"An error occurred during the search: {str(e)}")
         else:
             st.write("Please enter a search term.")
+
 
 
 
