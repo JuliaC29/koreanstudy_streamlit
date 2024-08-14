@@ -1,12 +1,9 @@
 import streamlit as st
 import pandas as pd
-import os
-#from google.cloud import storage
 import pandas as pd
 from googleapiclient.discovery import build
 from youtube_transcript_api import YouTubeTranscriptApi
 from youtube_transcript_api._errors import TranscriptsDisabled, NoTranscriptAvailable, NoTranscriptFound
-import hashlib
 from googleapiclient.errors import HttpError
 from googletrans import Translator
 
@@ -15,9 +12,6 @@ from googletrans import Translator
 import logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-
-# Set page configuration
-#st.set_page_config(layout="wide")
 
 # Custom CSS to center the title and style the audio buttons
 st.markdown("""
@@ -40,14 +34,12 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-
 # Load CSV data
 @st.cache_data
 def load_csv_data():
     try:
         df = pd.read_csv('fcstr1.csv')
-        lesson_list = df['lesson'].unique().tolist()
-       
+        lesson_list = df['lesson'].unique().tolist()      
         return df, lesson_list
     except Exception as e:
         st.error(f"Error loading CSV file: {e}")
@@ -55,12 +47,30 @@ def load_csv_data():
 
 df, lesson_list = load_csv_data()
 
+# Quizlet
+def get_lesson_link(lesson):
+    try:
+        row = df[df['lesson'] == lesson].iloc[0]
+        link = row['link']
+        lesson_code = row['lesson_code']
+        logger.info(f"Successfully retrieved link for lesson: {lesson}")
+        return link, lesson_code
+    except Exception as e:
+        logger.error(f"Error in get_lesson_link: {e}")
+        return None, None
 
-API_KEY = st.secrets["youtube_api"]["key"]
 
-youtube = build('youtube', 'v3', developerKey=API_KEY)
+# Load API key and initialize YouTube client
+try:
+    API_KEY = st.secrets["youtube_api"]["key"]
+    youtube = build('youtube', 'v3', developerKey=API_KEY)
+    logger.info("YouTube API client initialized successfully")
+except Exception as e:
+    logger.error(f"Error initializing YouTube API client: {str(e)}")
+    st.error("Error initializing YouTube API. Please check your API key configuration.")
+    youtube = None
+
 translator = Translator()
-
 
 # Define the channel IDs
 CHANNEL_IDS = [
@@ -125,13 +135,19 @@ def get_channel_videos(channel_id):
             if not next_page_token:
                 break
     except HttpError as e:
-        st.error(f"An error occurred while fetching videos for channel {channel_id}: {str(e)}")
+        logger.error(f"An error occurred while fetching videos for channel {channel_id}: {str(e)}")
+        st.error(f"An error occurred while fetching videos. Please try again later.")
         return []
     
     return videos
 
 @st.cache_data(ttl=3600)
 def search_videos(query):
+    if not youtube:
+        logger.error("YouTube API client is not initialized")
+        st.error("YouTube search is currently unavailable. Please try again later.")
+        return []
+
     all_videos = []
     for channel_id in CHANNEL_IDS:
         all_videos.extend(get_channel_videos(channel_id))
@@ -154,8 +170,6 @@ def get_video_details(video_id):
         st.error(f"An error occurred while fetching details for video {video_id}: {str(e)}")
         return {'viewCount': '0'}
 
-
-
 def format_time(seconds):
     minutes, seconds = divmod(int(seconds), 60)
     hours, minutes = divmod(minutes, 60)
@@ -165,53 +179,42 @@ def youtube_search_tab():
     st.header("YouTube Search")
     search_term = st.text_input("Enter a Korean grammar point or phrase:")
     if st.button("Search"):
+        if not youtube:
+            st.error("YouTube search is currently unavailable. Please try again later.")
+            return
+
         if search_term:
-            results = search_videos(search_term)
-            found_videos = 0
-            for item in results:
-                if found_videos >= 3:
-                    break
-                video_id = item['id']['videoId']
-                title = item['snippet']['title']
-                channel_title = item['snippet']['channelTitle']
-                transcript = get_caption_with_timestamps(video_id)
-                if transcript:
-                    matches = search_caption_with_context(transcript, search_term)
-                    if matches:
-                        video_stats = get_video_details(video_id)
-                        view_count = int(video_stats['viewCount'])
-                        st.write(f"### {title}")
-                        st.write(f"Channel: {channel_title}")
-                        #st.write(f"Views: {view_count:,}")
-                        timestamp, text = matches[0]  # Only use the first match
-                        formatted_time = format_time(timestamp)
-                        st.video(f"https://www.youtube.com/watch?v={video_id}&t={int(timestamp)}s")
-                        st.write(f"**[{formatted_time}]** {text}")
-                        english_translation = translate_text(text)
-                        st.write(f"Translation: {english_translation}")
-                        found_videos += 1
-            if found_videos == 0:
-                st.write("No videos with matching captions found. Try a different search term.")
+            try:
+                results = search_videos(search_term)
+                found_videos = 0
+                for item in results:
+                    if found_videos >= 3:
+                        break
+                    video_id = item['id']['videoId']
+                    title = item['snippet']['title']
+                    channel_title = item['snippet']['channelTitle']
+                    transcript = get_caption_with_timestamps(video_id)
+                    if transcript:
+                        matches = search_caption_with_context(transcript, search_term)
+                        if matches:
+                            video_stats = get_video_details(video_id)
+                            view_count = int(video_stats['viewCount'])
+                            st.write(f"### {title}")
+                            st.write(f"Channel: {channel_title}")
+                            timestamp, text = matches[0]  # Only use the first match
+                            formatted_time = format_time(timestamp)
+                            st.video(f"https://www.youtube.com/watch?v={video_id}&t={int(timestamp)}s")
+                            st.write(f"**[{formatted_time}]** {text}")
+                            english_translation = translate_text(text)
+                            st.write(f"Translation: {english_translation}")
+                            found_videos += 1
+                if found_videos == 0:
+                    st.write("No videos with matching captions found. Try a different search term.")
+            except Exception as e:
+                logger.error(f"Error in YouTube search: {str(e)}")
+                st.error("An error occurred during the search. Please try again later.")
         else:
             st.write("Please enter a search term.")
-
-
-
-
-
-def get_lesson_link(lesson):
-    try:
-        row = df[df['lesson'] == lesson].iloc[0]
-        link = row['link']
-        lesson_code = row['lesson_code']
-        logger.info(f"Successfully retrieved link for lesson: {lesson}")
-        return link, lesson_code
-    except Exception as e:
-        logger.error(f"Error in get_lesson_link: {e}")
-        return None, None
-
-
-
 
 
 # Streamlit app
@@ -225,8 +228,6 @@ with tab1:
         link, lesson_code = get_lesson_link(lesson)
         if link and lesson_code:
             st.markdown("Click: " f"[{lesson_code}]({link})", unsafe_allow_html=True)
-
-
   
 with tab2:
         youtube_search_tab()
