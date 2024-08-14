@@ -105,6 +105,12 @@ def search_caption_with_context(transcript, query):
             matches.append((start_time, end_time, full_text))
     return matches
 
+def translate_text(text):
+    try:
+        return translator.translate(text, src='ko', dest='en').text
+    except Exception as e:
+        st.warning(f"Translation failed: {str(e)}")
+        return "Translation not available"
 
 
 @st.cache_data(ttl=3600)
