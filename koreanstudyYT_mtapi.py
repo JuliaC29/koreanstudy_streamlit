@@ -64,62 +64,17 @@ def get_lesson_link(lesson):
 
 ### Select API Keys
 # Collect API keys from Streamlit secrets
-api_keys = [
-    st.secrets["youtube_api1"],
-    st.secrets["youtube_api2"],
-    st.secrets["youtube_api3"]
-]
-current_key_index = 0
-
-def initialize_youtube_api(selected_key_index=None):
-    global current_key_index
-    if selected_key_index is not None:
-        current_key_index = selected_key_index
-    while current_key_index < len(api_keys):
-        try:
-            api_key = api_keys[current_key_index].strip()
-            youtube = build('youtube', 'v3', developerKey=api_key)
-            return youtube
-        except HttpError as e:
-            if e.resp.status == 403:
-                st.warning(f"API key {current_key_index + 1} reached quota limit. Switching to the next key.")
-                current_key_index += 1
-                if current_key_index >= len(api_keys):
-                    raise Exception("All API keys have reached their usage quota.")
-            else:
-                raise e
-
-# Streamlit UI for selecting API key
-st.sidebar.header("API Key Selection")
-selected_key_index = st.sidebar.selectbox(
-    "Select the API key to use:",
-    options=range(len(api_keys)),
-    format_func=lambda x: f"API Key {x + 1}"
-)
-
-# Initialize YouTube API client with the selected API key
-try:
-    youtube = initialize_youtube_api(selected_key_index=selected_key_index)
-    st.sidebar.success(f"Using API Key {selected_key_index + 1}")
-except Exception as e:
-    st.error("Error initializing YouTube API. Please check your API key configuration.")
-    youtube = None
-
-
-
-### Automatically renewed API Keys
-# from googleapiclient.errors import HttpError
-
-# # Collect API keys from Streamlit secrets
 # api_keys = [
-#     st.secrets["youtube_api_1"],
-#     st.secrets["youtube_api_2"],
-#     st.secrets["youtube_api_3"]
+#     st.secrets["youtube_api1"],
+#     st.secrets["youtube_api2"],
+#     st.secrets["youtube_api3"]
 # ]
 # current_key_index = 0
 
-# def initialize_youtube_api():
+# def initialize_youtube_api(selected_key_index=None):
 #     global current_key_index
+#     if selected_key_index is not None:
+#         current_key_index = selected_key_index
 #     while current_key_index < len(api_keys):
 #         try:
 #             api_key = api_keys[current_key_index].strip()
@@ -127,50 +82,66 @@ except Exception as e:
 #             return youtube
 #         except HttpError as e:
 #             if e.resp.status == 403:
+#                 st.warning(f"API key {current_key_index + 1} reached quota limit. Switching to the next key.")
 #                 current_key_index += 1
 #                 if current_key_index >= len(api_keys):
 #                     raise Exception("All API keys have reached their usage quota.")
 #             else:
 #                 raise e
 
-# # Initialize YouTube API client
+# # Streamlit UI for selecting API key
+# st.sidebar.header("API Key Selection")
+# selected_key_index = st.sidebar.selectbox(
+#     "Select the API key to use:",
+#     options=range(len(api_keys)),
+#     format_func=lambda x: f"API Key {x + 1}"
+# )
+
+# # Initialize YouTube API client with the selected API key
 # try:
-#     youtube = initialize_youtube_api()
+#     youtube = initialize_youtube_api(selected_key_index=selected_key_index)
+#     st.sidebar.success(f"Using API Key {selected_key_index + 1}")
 # except Exception as e:
 #     st.error("Error initializing YouTube API. Please check your API key configuration.")
 #     youtube = None
 
 
 
+### Automatically renewed API Keys
+# from googleapiclient.errors import HttpError
 
+# # Collect API keys from Streamlit secrets
+api_keys = [
+    st.secrets["youtube_api1"],
+    st.secrets["youtube_api2"],
+    st.secrets["youtube_api3"]
+]
+current_key_index = 0
 
+def initialize_youtube_api():
+    global current_key_index
+    while current_key_index < len(api_keys):
+        try:
+            api_key = api_keys[current_key_index].strip()
+            youtube = build('youtube', 'v3', developerKey=api_key)
+            return youtube
+        except HttpError as e:
+            if e.resp.status == 403:
+                current_key_index += 1
+                if current_key_index >= len(api_keys):
+                    raise Exception("All API keys have reached their usage quota.")
+            else:
+                raise e
 
+# Initialize YouTube API client
+try:
+    youtube = initialize_youtube_api()
+except Exception as e:
+    st.error("Error initializing YouTube API. Please check your API key configuration.")
+    youtube = None
 
+translator = Translator()
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-### Existing code
 # Define the channel IDs
 CHANNEL_IDS = [
      
