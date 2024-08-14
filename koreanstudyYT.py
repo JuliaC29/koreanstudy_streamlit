@@ -59,10 +59,13 @@ def get_lesson_link(lesson):
         logger.error(f"Error in get_lesson_link: {e}")
         return None, None
 
+# Load API key from Streamlit secrets into environment variable
+import os
+os.environ['youtube_api'] = st.secrets['youtube_api']
 
-# Load API key and initialize YouTube client
+# Initialize YouTube API client
 try:
-    API_KEY = st.secrets["youtube_api"]["key"]
+    API_KEY = os.environ['youtube_api']
     youtube = build('youtube', 'v3', developerKey=API_KEY)
     logger.info("YouTube API client initialized successfully")
 except Exception as e:
