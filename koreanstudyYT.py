@@ -208,11 +208,11 @@ def youtube_search_tab():
                             
                             # Highlight the relevant timestamp
                             st.write(f"**[{formatted_time}]**: {text}")
-                            st.write(f"(Highlight) Translation: {translate_text(text)}")
+                            st.write(f"Translation: {translate_text(text)}")
 
                             # Provide the video with a suggestion to manually seek to the correct timestamp
                             st.video(f"https://www.youtube.com/watch?v={video_id}")
-                            st.info(f"Manually seek to **{formatted_time}** to find the relevant content.")
+                            st.info(f"Please manually seek to **{formatted_time}** in the video to view the relevant content.")
 
                             found_videos += 1
                 if found_videos == 0:
@@ -222,6 +222,7 @@ def youtube_search_tab():
                 st.error(f"An error occurred during the search: {str(e)}")
         else:
             st.write("Please enter a search term.")
+
 
 
 # Streamlit app
