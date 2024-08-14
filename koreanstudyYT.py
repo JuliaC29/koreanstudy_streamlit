@@ -103,15 +103,9 @@ def search_caption_with_context(transcript, query):
             context = transcript[start:end]
             full_text = ' '.join(item['text'] for item in context)
             start_time = context[0]['start']
-            matches.append((start_time, full_text))
+            end_time = context[-1]['start'] + context[-1]['duration']
+            matches.append((start_time, end_time, full_text))
     return matches
-
-def translate_text(text):
-    try:
-        return translator.translate(text, src='ko', dest='en').text
-    except Exception as e:
-        st.warning(f"Translation failed: {str(e)}")
-        return "Translation not available"
 
 
 @st.cache_data(ttl=3600)
@@ -203,10 +197,24 @@ def youtube_search_tab():
                             view_count = int(video_stats['viewCount'])
                             st.write(f"### {title}")
                             st.write(f"Channel: {channel_title}")
-                            timestamp, text = matches[0]  # Only use the first match
-                            formatted_time = format_time(timestamp)
-                            st.video(f"https://www.youtube.com/watch?v={video_id}&t={int(timestamp)}s")
-                            st.write(f"**[{formatted_time}]** {text}")    
+                            start_time, end_time, text = matches[0]  # Only use the first match
+                            formatted_time = format_time(start_time)
+                            video_url = f"https://www.youtube.com/embed/{video_id}?start={int(start_time)}&end={int(end_time)}"
+                            st.video(video_url)
+                            st.write(f"**[{formatted_time}]** {text}")
+                            
+                            # Add a button to show/hide the translation
+                            if 'show_translation' not in st.session_state:
+                                st.session_state['show_translation'] = False
+
+                            if st.button("Show Translation" if not st.session_state['show_translation'] else "Hide Translation"):
+                                st.session_state['show_translation'] = not st.session_state['show_translation']
+
+                            # Display the English translation if the button has been clicked
+                            if st.session_state['show_translation']:
+                                english_translation = translate_text(text)
+                                st.write(f"Translation: {english_translation}")
+                                
                             found_videos += 1
                 if found_videos == 0:
                     st.write("No videos with matching captions found. Try a different search term.")
@@ -215,8 +223,6 @@ def youtube_search_tab():
                 st.error("An error occurred during the search. Please try again later.")
         else:
             st.write("Please enter a search term.")
-
-
 
 
 # Streamlit app
