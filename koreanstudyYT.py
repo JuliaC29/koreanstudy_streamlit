@@ -68,11 +68,11 @@ try:
     API_KEY = os.environ['youtube_api']
     youtube = build('youtube', 'v3', developerKey=API_KEY)
     logger.info("YouTube API client initialized successfully")
-    st.write("YouTube API client initialized successfully")
+    #st.write("YouTube API client initialized successfully")
 except Exception as e:
     logger.error(f"Error initializing YouTube API client: {str(e)}")
     st.error("Error initializing YouTube API. Please check your API key configuration.")
-    st.write(f"Error initializing YouTube API client: {str(e)}")
+    #st.write(f"Error initializing YouTube API client: {str(e)}")
     youtube = None
 
 translator = Translator()
