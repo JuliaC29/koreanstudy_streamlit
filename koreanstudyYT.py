@@ -203,23 +203,19 @@ def youtube_search_tab():
                             view_count = int(video_stats['viewCount'])
                             st.write(f"### {title}")
                             st.write(f"Channel: {channel_title}")
-                            start_time, end_time, text = matches[0]  # Only use the first match
-                            formatted_time = format_time(start_time)
+                            st.write(f"**[{formatted_time}]** {text}")
+                            english_translation = translate_text(text)
+                            st.write(f"Translation: {english_translation}")
+                            timestamp, text = matches[0]  # Only use the first match
+                            formatted_time = format_time(timestamp)
+                            st.video(f"https://www.youtube.com/watch?v={video_id}&t={int(timestamp)}s")
                             
-                            # Highlight the relevant timestamp
-                            st.write(f"**[{formatted_time}]**: {text}")
-                            st.write(f"Translation: {translate_text(text)}")
-
-                            # Provide the video with a suggestion to manually seek to the correct timestamp
-                            st.video(f"https://www.youtube.com/watch?v={video_id}")
-                            st.info(f"Please manually seek to **{formatted_time}** in the video to view the relevant content.")
-
                             found_videos += 1
                 if found_videos == 0:
                     st.write("No videos with matching captions found. Try a different search term.")
             except Exception as e:
                 logger.error(f"Error in YouTube search: {str(e)}")
-                st.error(f"An error occurred during the search: {str(e)}")
+                st.error("An error occurred during the search. Please try again later.")
         else:
             st.write("Please enter a search term.")
 
