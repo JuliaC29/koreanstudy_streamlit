@@ -207,17 +207,19 @@ def youtube_search_tab():
                             formatted_time = format_time(timestamp)
                             st.video(f"https://www.youtube.com/watch?v={video_id}&t={int(timestamp)}s")
                             st.write(f"**[{formatted_time}]** {text}")
-                        # Add a button to show/hide the translation
+                            
+                            # Add a button to show/hide the translation
                             if 'show_translation' not in st.session_state:
                                 st.session_state['show_translation'] = False
 
                             if st.button("Show Translation" if not st.session_state['show_translation'] else "Hide Translation"):
                                 st.session_state['show_translation'] = not st.session_state['show_translation']
 
-                        # Display the English translation if the button has been clicked
+                            # Display the English translation if the button has been clicked
                             if st.session_state['show_translation']:
                                 english_translation = translate_text(text)
                                 st.write(f"Translation: {english_translation}")
+                                
                             found_videos += 1
                 if found_videos == 0:
                     st.write("No videos with matching captions found. Try a different search term.")
@@ -226,6 +228,7 @@ def youtube_search_tab():
                 st.error("An error occurred during the search. Please try again later.")
         else:
             st.write("Please enter a search term.")
+
 
 
 
