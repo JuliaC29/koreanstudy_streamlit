@@ -60,56 +60,6 @@ def get_lesson_link(lesson):
         return None, None
 
 
-
-
-### Select API Keys
-# Collect API keys from Streamlit secrets
-# api_keys = [
-#     st.secrets["youtube_api1"],
-#     st.secrets["youtube_api2"],
-#     st.secrets["youtube_api3"]
-# ]
-# current_key_index = 0
-
-# def initialize_youtube_api(selected_key_index=None):
-#     global current_key_index
-#     if selected_key_index is not None:
-#         current_key_index = selected_key_index
-#     while current_key_index < len(api_keys):
-#         try:
-#             api_key = api_keys[current_key_index].strip()
-#             youtube = build('youtube', 'v3', developerKey=api_key)
-#             return youtube
-#         except HttpError as e:
-#             if e.resp.status == 403:
-#                 st.warning(f"API key {current_key_index + 1} reached quota limit. Switching to the next key.")
-#                 current_key_index += 1
-#                 if current_key_index >= len(api_keys):
-#                     raise Exception("All API keys have reached their usage quota.")
-#             else:
-#                 raise e
-
-# # Streamlit UI for selecting API key
-# st.sidebar.header("API Key Selection")
-# selected_key_index = st.sidebar.selectbox(
-#     "Select the API key to use:",
-#     options=range(len(api_keys)),
-#     format_func=lambda x: f"API Key {x + 1}"
-# )
-
-# # Initialize YouTube API client with the selected API key
-# try:
-#     youtube = initialize_youtube_api(selected_key_index=selected_key_index)
-#     st.sidebar.success(f"Using API Key {selected_key_index + 1}")
-# except Exception as e:
-#     st.error("Error initializing YouTube API. Please check your API key configuration.")
-#     youtube = None
-
-
-
-### Automatically renewed API Keys
-# from googleapiclient.errors import HttpError
-
 # # Collect API keys from Streamlit secrets
 api_keys = [
     st.secrets["youtube_api1"],
@@ -147,6 +97,7 @@ CHANNEL_IDS = [
      
     "UCAmia3u27mHY-Y6c-lwakAQ",  # Pororo
     "UCaKod3X1Tn4c7Ci0iUKcvzQ",  # SBS Running Man
+    "UC920m3pMPH45qztdhppZhwA"   # youquizontheblock
     
 ]
 
@@ -164,14 +115,12 @@ def get_caption_with_timestamps(video_id):
 
 def search_caption_with_context(transcript, query):
     matches = []
-    for i, entry in enumerate(transcript):
+    for entry in transcript:
         if query.lower() in entry['text'].lower():
-            start = max(0, i - 1)
-            end = min(len(transcript), i + 2)
-            context = transcript[start:end]
-            full_text = ' '.join(item['text'] for item in context)
-            start_time = context[0]['start']
-            matches.append((start_time, full_text))
+            start_time = entry['start']
+            end_time = start_time + entry['duration']
+            full_text = entry['text']
+            matches.append((start_time, end_time, full_text))
     return matches
 
 def translate_text(text):
@@ -275,18 +224,24 @@ def youtube_search_tab():
                             view_count = int(video_stats['viewCount'])
                             st.write(f"### {title}")
                             st.write(f"Channel: {channel_title}")
-                            timestamp, text = matches[0]  # Only use the first match
+                            
+                            # Correct the order and variable usage
+                            timestamp, end_time, text = matches[0]  # Only use the first match
                             formatted_time = format_time(timestamp)
-                            st.video(f"https://www.youtube.com/watch?v={video_id}&t={int(timestamp)}s")
                             st.write(f"**[{formatted_time}]** {text}")
+                            
                             english_translation = translate_text(text)
                             st.write(f"Translation: {english_translation}")
+                            
+                            # Embed the video with the correct timestamp
+                            st.video(f"https://www.youtube.com/watch?v={video_id}&t={int(timestamp)}s")
+                            
                             found_videos += 1
                 if found_videos == 0:
                     st.write("No videos with matching captions found. Try a different search term.")
             except Exception as e:
                 logger.error(f"Error in YouTube search: {str(e)}")
-                st.error("An error occurred during the search. Please try again later.")
+                st.error(f"An error occurred during the search. Please try again later.")
         else:
             st.write("Please enter a search term.")
 
