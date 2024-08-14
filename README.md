@@ -1,1 +1,1 @@
-# koreanstudy_streamlit
+# fc_streamlit
