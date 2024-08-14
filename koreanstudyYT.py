@@ -38,7 +38,7 @@ st.markdown("""
 @st.cache_data
 def load_csv_data():
     try:
-        df = pd.read_csv('fcstr1.csv')
+        df = pd.read_csv('data/fcstr1.csv')
         lesson_list = df['lesson'].unique().tolist()      
         return df, lesson_list
     except Exception as e:
@@ -74,6 +74,7 @@ except Exception as e:
     youtube = None
 
 translator = Translator()
+
 
 # Define the channel IDs
 CHANNEL_IDS = [
