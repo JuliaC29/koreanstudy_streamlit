@@ -97,13 +97,14 @@ def get_caption_with_timestamps(video_id):
 
 def search_caption_with_context(transcript, query):
     matches = []
-    for i, entry in enumerate(transcript):
+    for entry in transcript:
         if query.lower() in entry['text'].lower():
             start_time = entry['start']
             end_time = start_time + entry['duration']
             full_text = entry['text']
             matches.append((start_time, end_time, full_text))
     return matches
+
 
 def translate_text(text):
     try:
@@ -205,12 +206,14 @@ def youtube_search_tab():
                             start_time, end_time, text = matches[0]  # Only use the first match
                             formatted_time = format_time(start_time)
                             
-                            # Use the YouTube watch URL with a start parameter for better compatibility
-                            video_url = f"https://www.youtube.com/watch?v={video_id}&t={int(start_time)}s"
-                            st.video(video_url)
-                            
-                            st.write(f"**[{formatted_time}]** {text}")
-                            st.write(f"Translation: {translate_text(text)}")
+                            # Highlight the relevant timestamp
+                            st.write(f"**[{formatted_time}]**: {text}")
+                            st.write(f"(Highlight) Translation: {translate_text(text)}")
+
+                            # Provide the video with a suggestion to manually seek to the correct timestamp
+                            st.video(f"https://www.youtube.com/watch?v={video_id}")
+                            st.info(f"Manually seek to **{formatted_time}** to find the relevant content.")
+
                             found_videos += 1
                 if found_videos == 0:
                     st.write("No videos with matching captions found. Try a different search term.")
@@ -219,9 +222,6 @@ def youtube_search_tab():
                 st.error(f"An error occurred during the search: {str(e)}")
         else:
             st.write("Please enter a search term.")
-
-
-
 
 
 # Streamlit app
