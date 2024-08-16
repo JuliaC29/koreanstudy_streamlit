@@ -11,6 +11,12 @@ st.markdown(
         text-align: center;
     }
 
+    /* Center the header */
+        .header {
+            text-align: center;
+            font-size: 22px
+        }
+
     /* Increase the font size of the subheader content and add spacing */
     .subheader-content {
         font-size: 20px;
@@ -40,7 +46,7 @@ st.markdown(
 
 # Title 
 st.markdown('<h1 class="title">Korean Conversation Table</h1>', unsafe_allow_html=True)
-
+st.markdown("""<div class="header">Fall 2024</div>""", unsafe_allow_html=True)
 
 # Introduction
 st.markdown("""
@@ -58,10 +64,10 @@ st.markdown(f'<div class="subheader-content"><a href="{location_url}">Language C
 
 st.subheader("🕒 Time and Dates")
 dates = {
-    "<span class='dot-icon'>🔵</span> September 23, 2024": "5:15 PM - 6:45 PM",
-    "<span class='dot-icon'>🟢</span> October 8, 2024": "5:15 PM - 6:45 PM",
-    "<span class='dot-icon'>🔴</span> October 29, 2024": "5:15 PM - 6:45 PM",
-    "<span class='dot-icon'>🟡</span> November 14, 2024": "5:15 PM - 6:45 PM"
+    "<span class='dot-icon'>🔵</span> September 23 (M)": "5:15 PM - 6:45 PM",
+    "<span class='dot-icon'>🟢</span> October 8 (T)": "5:15 PM - 6:45 PM",
+    "<span class='dot-icon'>🔴</span> October 29 (T)": "5:15 PM - 6:45 PM",
+    "<span class='dot-icon'>🟡</span> November 14 (TH)": "5:15 PM - 6:45 PM"
 }
 
 for date, time in dates.items():
