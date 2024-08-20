@@ -13,23 +13,11 @@ import logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Custom CSS to center the title and style the audio buttons
+# Custom CSS to center the title
 st.markdown("""
 <style>
     .title {
         text-align: center;
-    }
-    .stAudio {
-        display: inline-block;
-        width: 30px !important;
-        height: 30px !important;
-        margin-left: 10px;
-    }
-    .stAudio > div {
-        height: 30px !important;
-    }
-    .stAudio audio {
-        height: 30px !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -47,7 +35,7 @@ def load_csv_data():
 
 df, lesson_list = load_csv_data()
 
-# Quizlet
+# Function to retrieve Quizlet links for selected lessons
 def get_lesson_link(lesson):
     try:
         row = df[df['lesson'] == lesson].iloc[0]
@@ -60,7 +48,11 @@ def get_lesson_link(lesson):
         return None, None
 
 
-# # Collect API keys from Streamlit secrets
+# Load multiple YouTube API keys from Streamlit secrets and initialize the YouTube API client.
+# The system attempts to initialize the API using the first available key.
+# If a key exceeds its usage quota (HTTP 403 error), it automatically switches to the next key in the list.
+# If all keys are exhausted, an exception is raised.
+
 api_keys = [
     st.secrets["youtube_api1"],
     st.secrets["youtube_api2"],
@@ -83,13 +75,13 @@ def initialize_youtube_api():
             else:
                 raise e
 
-# Initialize YouTube API client
 try:
     youtube = initialize_youtube_api()
 except Exception as e:
     st.error("Error initializing YouTube API. Please check your API key configuration.")
     youtube = None
 
+# Initialize Google Translator
 translator = Translator()
 
 # Define the channel IDs
@@ -101,7 +93,7 @@ CHANNEL_IDS = [
     
 ]
 
-
+# Function to get captions with timestamps for a video
 @st.cache_data(ttl=86400)
 def get_caption_with_timestamps(video_id):
     try:
@@ -113,6 +105,7 @@ def get_caption_with_timestamps(video_id):
         st.warning(f"Captions not available for video {video_id}: {str(e)}")
         return None
 
+# Function to search for specific phrases in the captions
 def search_caption_with_context(transcript, query):
     matches = []
     for entry in transcript:
@@ -123,6 +116,7 @@ def search_caption_with_context(transcript, query):
             matches.append((start_time, end_time, full_text))
     return matches
 
+# Function to translate text from Korean to English
 def translate_text(text):
     try:
         return translator.translate(text, src='ko', dest='en').text
@@ -130,7 +124,7 @@ def translate_text(text):
         st.warning(f"Translation failed: {str(e)}")
         return "Translation not available"
 
-
+# Function to get videos from a specific YouTube channel
 @st.cache_data(ttl=3600)
 def get_channel_videos(channel_id):
     videos = []
@@ -160,6 +154,7 @@ def get_channel_videos(channel_id):
     
     return videos
 
+# Function to search for videos across channels based on a query
 @st.cache_data(ttl=3600)
 def search_videos(query):
     if not youtube:
@@ -176,6 +171,7 @@ def search_videos(query):
     
     return all_videos[:50]  # Return top 50 most viewed videos across all channels
 
+# Function to get video details such as view count
 @st.cache_data(ttl=86400)
 def get_video_details(video_id): #updated HttpError
     try:
@@ -192,12 +188,13 @@ def get_video_details(video_id): #updated HttpError
         else:
             raise e
 
-
+# Function to format time from seconds to HH:MM:SS
 def format_time(seconds):
     minutes, seconds = divmod(int(seconds), 60)
     hours, minutes = divmod(minutes, 60)
     return f"{hours:02d}:{minutes:02d}:{seconds:02d}"
 
+# Function to handle the YouTube search and display results
 def youtube_search_tab():
     st.header("YouTube Search")
     search_term = st.text_input("Enter a Korean grammar point or phrase:")
@@ -246,8 +243,7 @@ def youtube_search_tab():
             st.write("Please enter a search term.")
 
 
-# Streamlit app
-# Centered title
+# Streamlit app setup with tabs for different sections
 st.markdown("<h1 class='title'>한국어 단어와 문법</h1>", unsafe_allow_html=True)
 tab1, tab2 = st.tabs(["Vocabulary", "Grammar"])
 
