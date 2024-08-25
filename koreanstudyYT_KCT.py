@@ -315,7 +315,7 @@ with tab3:
     st.write("If you have any questions, feel free to reach out!")
 
     # Email button
-    contact_url = "jqu5mk@virginia.edu"
+    contact_url = "https://forms.gle/H3fNCb7whLJxpkbt5"
     st.markdown(f'<a href="{contact_url}" style="font-size:16px; padding:10px; background-color:#ffcc00; border-radius:5px; color:black; text-decoration:none;">Click Here to Email Us!</a>', unsafe_allow_html=True)
 
 
