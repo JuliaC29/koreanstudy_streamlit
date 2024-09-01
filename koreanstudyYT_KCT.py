@@ -65,7 +65,7 @@ translator = Translator()
 # Define the channel IDs
 CHANNEL_IDS = [
      
-    "UCAmia3u27mHY-Y6c-lwakAQ",  # Pororo
+    
     "UCaKod3X1Tn4c7Ci0iUKcvzQ",  # SBS Running Man
     "UC920m3pMPH45qztdhppZhwA"   # youquizontheblock
 ]
@@ -108,11 +108,11 @@ def get_channel_videos(channel_id):
     next_page_token = None
     
     try:
-        while len(videos) < 50:  # Limit to 50 videos per channel
+        while len(videos) < 10:  # Limit to 50 videos per channel
             request = youtube.search().list(
                 part="id,snippet",
                 channelId=channel_id,
-                maxResults=50,
+                maxResults=10,
                 order="viewCount",
                 type="video",
                 pageToken=next_page_token
