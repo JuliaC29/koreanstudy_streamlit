@@ -108,7 +108,7 @@ def get_channel_videos(channel_id):
     next_page_token = None
     
     try:
-        while len(videos) < 10:  # Limit to 50 videos per channel
+        while len(videos) < 10:  # Limit to 10 videos per channel
             request = youtube.search().list(
                 part="id,snippet",
                 channelId=channel_id,
