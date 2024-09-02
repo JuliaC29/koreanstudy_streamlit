@@ -146,7 +146,7 @@ def search_videos(query):
     # Sort all videos by view count
     all_videos.sort(key=lambda x: int(get_video_details(x['id']['videoId'])['viewCount']), reverse=True)
     
-    return all_videos[:5]  # Return top 10 most viewed videos across all channels
+    return all_videos[:5]  # Return top 5 most viewed videos across all channels
 
 # Function to get video details such as view count
 @st.cache_data(ttl=86400)
