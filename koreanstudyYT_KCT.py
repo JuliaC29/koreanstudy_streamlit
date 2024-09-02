@@ -108,11 +108,11 @@ def get_channel_videos(channel_id):
     next_page_token = None
     
     try:
-        while len(videos) < 10:  # Limit to 10 videos per channel
+        while len(videos) < 5:  # Limit to 5 videos per channel
             request = youtube.search().list(
                 part="id,snippet",
                 channelId=channel_id,
-                maxResults=10,
+                maxResults=5,
                 order="viewCount",
                 type="video",
                 pageToken=next_page_token
@@ -146,7 +146,7 @@ def search_videos(query):
     # Sort all videos by view count
     all_videos.sort(key=lambda x: int(get_video_details(x['id']['videoId'])['viewCount']), reverse=True)
     
-    return all_videos[:10]  # Return top 10 most viewed videos across all channels
+    return all_videos[:5]  # Return top 10 most viewed videos across all channels
 
 # Function to get video details such as view count
 @st.cache_data(ttl=86400)
