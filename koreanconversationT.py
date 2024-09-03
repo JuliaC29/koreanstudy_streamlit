@@ -66,7 +66,7 @@ st.subheader("🕒 Time and Dates")
 dates = {
     "<span class='dot-icon'>🔵</span> September 23 (M)": "5:15 PM - 6:45 PM",
     "<span class='dot-icon'>🟢</span> October 8 (T)": "5:15 PM - 6:45 PM",
-    "<span class='dot-icon'>🔴</span> October 29 (T)": "5:15 PM - 6:45 PM",
+    "<span class='dot-icon'>🔴</span> October 29 (T), K-Move Night": "5:15 PM - 6:45 PM",
     "<span class='dot-icon'>🟡</span> November 14 (TH)": "5:15 PM - 6:45 PM"
 }
 
