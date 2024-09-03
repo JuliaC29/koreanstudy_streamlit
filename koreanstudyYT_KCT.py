@@ -273,7 +273,7 @@ with tab3:
 
     # Title 
     st.markdown('<h1 class="title">Korean Conversation Table</h1>', unsafe_allow_html=True)
-
+    st.markdown("""<div class="header">Fall 2024</div>""", unsafe_allow_html=True)
 
     # Introduction
     st.markdown("""
