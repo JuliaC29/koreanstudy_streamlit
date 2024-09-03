@@ -237,39 +237,45 @@ with tab2:
 with tab3:
     # Custom CSS for styling
     st.markdown(
-        """
-        <style>
-        /* Center the title */
-        .title {
+    """
+    <style>
+    /* Center the title */
+    .title {
+        text-align: center;
+    }
+
+    /* Center the header */
+        .header {
             text-align: center;
+            font-size: 22px
         }
 
-        /* Increase the font size of the subheader content and add spacing */
-        .subheader-content {
-            font-size: 20px;
-            text-align: justify;
-            margin-bottom: 20px;
-        }
+    /* Increase the font size of the subheader content and add spacing */
+    .subheader-content {
+        font-size: 20px;
+        text-align: justify;
+        margin-bottom: 20px;
+    }
 
-        /* Add space between subheaders and their content */
-        .stMarkdown h2 {
-            margin-top: 30px;
-        }
+    /* Add space between subheaders and their content */
+    .stMarkdown h2 {
+        margin-top: 30px;
+    }
 
-        /* Add space between content blocks */
-        .content-block {
-            margin-bottom: 30px;
-        }
+    /* Add space between content blocks */
+    .content-block {
+        margin-bottom: 30px;
+    }
 
-        /* Adjust this value to make the dots smaller or larger */
-        .dot-icon {
-            font-size: 10px;  
-        }
-    
-        </style>
-        """,
-        unsafe_allow_html=True
-    )
+    /* Adjust this value to make the dots smaller or larger */
+    .dot-icon {
+        font-size: 10px;  
+    }
+   
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
     # Title 
     st.markdown('<h1 class="title">Korean Conversation Table</h1>', unsafe_allow_html=True)
@@ -291,10 +297,10 @@ with tab3:
 
     st.subheader("🕒 Time and Dates")
     dates = {
-        "<span class='dot-icon'>🔵</span> September 23, 2024": "5:15 PM - 6:45 PM",
-        "<span class='dot-icon'>🟢</span> October 8, 2024": "5:15 PM - 6:45 PM",
-        "<span class='dot-icon'>🔴</span> October 29, 2024": "5:15 PM - 6:45 PM",
-        "<span class='dot-icon'>🟡</span> November 14, 2024": "5:15 PM - 6:45 PM"
+        "<span class='dot-icon'>🔵</span> September 23 (M)": "5:15 PM - 6:45 PM",
+        "<span class='dot-icon'>🟢</span> October 8 (T)": "5:15 PM - 6:45 PM",
+        "<span class='dot-icon'>🔴</span> October 29 (T), K-Movie Night": "5 PM - 7 PM",
+        "<span class='dot-icon'>🟡</span> November 14 (TH)": "5:15 PM - 6:45 PM"
     }
 
     for date, time in dates.items():
