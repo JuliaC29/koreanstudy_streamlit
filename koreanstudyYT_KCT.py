@@ -5,6 +5,7 @@ from youtube_transcript_api import YouTubeTranscriptApi
 from youtube_transcript_api._errors import TranscriptsDisabled, NoTranscriptAvailable, NoTranscriptFound
 from googleapiclient.errors import HttpError
 from googletrans import Translator
+import re
 
 
 # Set up logging
@@ -150,7 +151,7 @@ def youtube_search_by_link():
 
 # Streamlit app setup with tabs for different sections
 st.markdown("<h1 class='title'>한국어 단어와 문법</h1>", unsafe_allow_html=True)
-tab1, tab2, tab3, tab4 = st.tabs(["Vocabulary", "Grammar", "Korean Conversation Table", "Grammar2"])
+tab1, tab2, tab3= st.tabs(["Vocabulary", "Grammar", "Korean Conversation Table"])
 
 with tab1:
     lesson = st.selectbox("Select a lesson", lesson_list)
