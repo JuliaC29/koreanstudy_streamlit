@@ -110,9 +110,9 @@ def format_time(seconds):
 
 # Function to embed YouTube video with HTML iframe starting at a specific timestamp
 def embed_youtube_video(video_id, start_time_seconds):
-    youtube_url = f"https://www.youtube.com/embed/{video_id}?start={start_time_seconds}&autoplay=1"
+    youtube_url = f"https://www.youtube.com/embed/{video_id}?start={start_time_seconds}"
     video_html = f"""
-        <iframe width="700" height="400" src="{youtube_url}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        <iframe width="700" height="400" src="{youtube_url}" frameborder="0" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
     """
     st.markdown(video_html, unsafe_allow_html=True)
 
