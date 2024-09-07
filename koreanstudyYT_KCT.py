@@ -118,7 +118,7 @@ def embed_youtube_video(video_id, start_time_seconds):
 
 # Function to handle the YouTube link and caption search
 def youtube_search_by_link():
-    st.header("YouTube Caption Search by Link")
+    st.header("YouTube Caption Search")
     youtube_url = st.text_input("Paste the YouTube link here:")
     search_term = st.text_input("Enter a Korean grammar point or phrase:")
     
