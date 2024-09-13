@@ -6,6 +6,7 @@ from youtube_transcript_api._errors import TranscriptsDisabled, NoTranscriptAvai
 from googleapiclient.errors import HttpError
 from googletrans import Translator
 import re
+import os
 
 
 # Set up logging
