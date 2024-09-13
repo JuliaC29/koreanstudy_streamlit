@@ -280,9 +280,9 @@ with tab4:
        
 
         "호랑이와 곶감 – The Tiger and the Persimmon",
-        "빨간부채 파란부채 – The Red Fan and the Blue Fan",
+        "빨간 부채 파란 부채 – The Red Fan and the Blue Fan",
         "열두 띠 이야기 – The Story of the Twelve Zodiac Animals",
-        "방귀시합 – The Fart Contest",
+        "방귀 시합 – The Fart Contest",
         "단군 이야기 – The Story of Dangun",
         "재주 많은 오형제 – The Five Brothers with Many Talents",
         "무엇이든 될 수 있어 – You Can Be Anything",
