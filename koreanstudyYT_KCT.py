@@ -345,14 +345,7 @@ with tab4:
             
             st.success(f"You have reserved {selected_book} for {selected_day}.")
 
-    # Display current reservations
-    st.markdown(
-        """
-        <div font-size: 20px;">
-            Please pick up your reserved book at New Cabell Hall 138 at 5:05 PM.
-        </div>
-        """, 
-        unsafe_allow_html=True)
+
    
  
     # Display the DataFrame (CSV file)
