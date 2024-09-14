@@ -63,6 +63,9 @@ else:
     reservation_data = pd.DataFrame(columns=["Book", "Reserved By", "Day"])
 
 
+
+
+
 # Load API key from Streamlit secrets and initialize YouTube API client
 try:
     API_KEY = st.secrets['youtube_api']
@@ -327,6 +330,10 @@ with tab4:
                 # Save the updated reservations to the CSV file
                 reservation_data.to_csv(csv_file_path, index=False)
 
+            
+                # Debugging: Confirm the file has been saved
+                st.write(f"Data saved to: {csv_file_path}")
+
                 st.success(f"You have reserved {selected_book} for {selected_day}.")
         else:
             st.error("Please enter your name to reserve the book.")
@@ -337,3 +344,5 @@ with tab4:
         st.write(reservation_data)
     else:
         st.write("No books have been reserved yet.")
+
+
