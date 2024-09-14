@@ -164,12 +164,12 @@ with tab2:
             
             st.success(f"You have reserved {selected_book} for {selected_day}.")
 
-    # Clear button to reset reservations
-    if st.button("Clear Reservations"):
-        reservation_data = pd.DataFrame(columns=["Book", "Reserved By", "Day"])  # Empty DataFrame
-        reservation_data.to_csv(csv_file_path, index=False)  # Save empty DataFrame to CSV
-        st.success("All reservations have been cleared.")
-
-
+    # Display the DataFrame (CSV file)
+    if not reservation_data.empty:
+        st.markdown('<div class="dataframe-container">', unsafe_allow_html=True)
+        st.dataframe(reservation_data)
+        st.markdown('</div>', unsafe_allow_html=True)
+    else:
+        st.write("No books have been reserved yet.")
     
 
