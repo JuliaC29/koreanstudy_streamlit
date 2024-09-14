@@ -296,7 +296,14 @@ with tab4:
 
     
     # Filepath for reservations CSV
-    reservation_data.to_csv(csv_file_path, index=False)
+    reservation_file = 'reservations.csv'
+
+    # Load existing reservations from CSV if it exists
+    if os.path.exists(reservation_file):
+        reservation_data = pd.read_csv(reservation_file)
+    else:
+        # Create an empty DataFrame if the file does not exist
+        reservation_data = pd.DataFrame(columns=["Book", "Reserved By", "Day"])
 
   
     # Select a book from the list
