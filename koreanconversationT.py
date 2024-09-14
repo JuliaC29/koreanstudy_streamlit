@@ -115,84 +115,84 @@ with tab1:
 with tab2:
 
 
-    # Create a list of books
-    books = [
+    # # Create a list of books
+    # books = [
        
 
-        "호랑이와 곶감 – The Tiger and the Persimmon",
-        "빨간 부채 파란 부채 – The Red Fan and the Blue Fan",
-        "열두 띠 이야기 – The Story of the Twelve Zodiac Animals",
-        "방귀 시합 – The Fart Contest",
-        "단군 이야기 – The Story of Dangun",
-        "재주 많은 오형제 – The Five Brothers with Many Talents",
-        "무엇이든 될 수 있어 – You Can Be Anything",
-        "모두의 장난감 – Everyone's Toy",
-        "아빠의 마음 날씨 – The Weather of Dad's Heart",
-        "함께하는 저녁 시간 – Shared Evening Time",
-        "달라도 괜찮아 – It's Okay to Be Different"
+    #     "호랑이와 곶감 – The Tiger and the Persimmon",
+    #     "빨간 부채 파란 부채 – The Red Fan and the Blue Fan",
+    #     "열두 띠 이야기 – The Story of the Twelve Zodiac Animals",
+    #     "방귀 시합 – The Fart Contest",
+    #     "단군 이야기 – The Story of Dangun",
+    #     "재주 많은 오형제 – The Five Brothers with Many Talents",
+    #     "무엇이든 될 수 있어 – You Can Be Anything",
+    #     "모두의 장난감 – Everyone's Toy",
+    #     "아빠의 마음 날씨 – The Weather of Dad's Heart",
+    #     "함께하는 저녁 시간 – Shared Evening Time",
+    #     "달라도 괜찮아 – It's Okay to Be Different"
 
-    ]
+    # ]
 
-    # Create three different conversation table days
-    days = ["9/23/M", "10/8/T", "11/14/TH"]
+    # # Create three different conversation table days
+    # days = ["9/23/M", "10/8/T", "11/14/TH"]
 
-    # Filepath for reservations CSV
-    reservation_file = 'reservations.csv'
+    # # Filepath for reservations CSV
+    # reservation_file = 'reservations.csv'
 
-    # Load existing reservations from CSV if it exists
-    if os.path.exists(reservation_file):
-        reservation_data = pd.read_csv(reservation_file)
-    else:
-        # Create an empty DataFrame if the file does not exist
-        reservation_data = pd.DataFrame(columns=["Book", "Reserved By", "Day"])
+    # # Load existing reservations from CSV if it exists
+    # if os.path.exists(reservation_file):
+    #     reservation_data = pd.read_csv(reservation_file)
+    # else:
+    #     # Create an empty DataFrame if the file does not exist
+    #     reservation_data = pd.DataFrame(columns=["Book", "Reserved By", "Day"])
 
 
     
 
-    # Select a book from the list
-    selected_book = st.selectbox("Select a book", books)
+    # # Select a book from the list
+    # selected_book = st.selectbox("Select a book", books)
 
-    # Select a conversation day
-    selected_day = st.selectbox("Select a day", days)
+    # # Select a conversation day
+    # selected_day = st.selectbox("Select a day", days)
 
-    # Enter the name of the person reserving the book
-    reserver_name = st.text_input("Enter your name to reserve this book:")
+    # # Enter the name of the person reserving the book
+    # reserver_name = st.text_input("Enter your name to reserve this book:")
 
-    # Reserve button
-    if st.button("Reserve"):
-        # Check if the book is already reserved for the selected day
-        existing_reservation = reservation_data[
-            (reservation_data["Book"] == selected_book) &
-            (reservation_data["Day"] == selected_day)
-        ]
+    # # Reserve button
+    # if st.button("Reserve"):
+    #     # Check if the book is already reserved for the selected day
+    #     existing_reservation = reservation_data[
+    #         (reservation_data["Book"] == selected_book) &
+    #         (reservation_data["Day"] == selected_day)
+    #     ]
         
-        if not existing_reservation.empty:
-            st.error(f"Sorry, {selected_book} is already reserved for {selected_day}.")
-        else:
-            # Add the reservation to the DataFrame
-            new_reservation = pd.DataFrame({
-                "Book": [selected_book],
-                "Reserved By": [reserver_name],
-                "Day": [selected_day]
-            })
-            reservation_data = pd.concat([reservation_data, new_reservation], ignore_index=True)
+    #     if not existing_reservation.empty:
+    #         st.error(f"Sorry, {selected_book} is already reserved for {selected_day}.")
+    #     else:
+    #         # Add the reservation to the DataFrame
+    #         new_reservation = pd.DataFrame({
+    #             "Book": [selected_book],
+    #             "Reserved By": [reserver_name],
+    #             "Day": [selected_day]
+    #         })
+    #         reservation_data = pd.concat([reservation_data, new_reservation], ignore_index=True)
             
-            # Save the updated reservations to the CSV file in the 'data' folder
-            reservation_data.to_csv(csv_file_path, index=False)
+    #         # Save the updated reservations to the CSV file in the 'data' folder
+    #         reservation_data.to_csv(csv_file_path, index=False)
             
-            st.success(f"You have reserved {selected_book} for {selected_day}.")
+    #         st.success(f"You have reserved {selected_book} for {selected_day}.")
 
-    # Display the DataFrame (CSV file)
-    if not reservation_data.empty:
-        st.markdown('<div class="dataframe-container">', unsafe_allow_html=True)
-        st.dataframe(reservation_data)
-        st.markdown('</div>', unsafe_allow_html=True)
-    else:
-        st.write("No books have been reserved yet.")
+    # # Display the DataFrame (CSV file)
+    # if not reservation_data.empty:
+    #     st.markdown('<div class="dataframe-container">', unsafe_allow_html=True)
+    #     st.dataframe(reservation_data)
+    #     st.markdown('</div>', unsafe_allow_html=True)
+    # else:
+    #     st.write("No books have been reserved yet.")
     
 
-        # Clear button to delete session state and CSV file
-    if st.button("Clear All Reservations"):
-        st.session_state["reservation_data"] = pd.DataFrame(columns=["Book", "Reserved By", "Day"])
-        st.session_state["reservation_data"].to_csv(csv_file_path, index=False)
-        st.success("All reservations cleared.")
+    #     # Clear button to delete session state and CSV file
+    # if st.button("Clear All Reservations"):
+    #     st.session_state["reservation_data"] = pd.DataFrame(columns=["Book", "Reserved By", "Day"])
+    #     st.session_state["reservation_data"].to_csv(csv_file_path, index=False)
+    #     st.success("All reservations cleared.")
