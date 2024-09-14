@@ -147,8 +147,15 @@ with tab2:
     if reservation_data.empty:
         reservation_data = pd.DataFrame(columns=["Book", "Reserved By", "Day"])
 
-    # Sample Streamlit UI for reservations
-    st.title("Book Reservations")
+    # Center the text and change the font size
+    st.markdown(
+    """
+    <h2 style="text-align: center; font-size: 28px;">
+        Book Reservations
+    </h2>
+    """,
+    unsafe_allow_html=True
+    )
 
     books = [
         "호랑이와 곶감 – The Tiger and the Persimmon",
