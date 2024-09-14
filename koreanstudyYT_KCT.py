@@ -269,13 +269,16 @@ with tab3:
 with tab4:
 
     # Define the correct Google Sheets scopes
-    SCOPE = ["https://www.googleapis.com/auth/spreadsheets",  # Access to Google Sheets
-            "https://www.googleapis.com/auth/drive.file"]    # Allows access to files created or opened by the app
+   
+
+
+    SCOPE = ["https://spreadsheets.google.com/feeds", 'https://www.googleapis.com/auth/spreadsheets',
+            "https://www.googleapis.com/auth/drive.file", "https://www.googleapis.com/auth/drive"]
 
 
     # Load Google service account credentials from Streamlit secrets
     credentials_dict = st.secrets["google_service_account"]
-    credentials = Credentials.from_service_account_info(credentials_dict)
+    credentials = Credentials.from_service_account_info(credentials_dict, scopes=SCOPE)
 
     # Authorize the client
     client = gspread.authorize(credentials)
