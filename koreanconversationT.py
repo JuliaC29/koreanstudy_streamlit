@@ -113,12 +113,8 @@ with tab1:
     st.markdown(f'<a href="{contact_url}" style="font-size:16px; padding:10px; background-color:#ffcc00; border-radius:5px; color:black; text-decoration:none;">Click Here to Email Us!</a>', unsafe_allow_html=True)
 
 with tab2:
-
-
     # Create a list of books
     books = [
-       
-
         "호랑이와 곶감 – The Tiger and the Persimmon",
         "빨간 부채 파란 부채 – The Red Fan and the Blue Fan",
         "열두 띠 이야기 – The Story of the Twelve Zodiac Animals",
@@ -130,24 +126,10 @@ with tab2:
         "아빠의 마음 날씨 – The Weather of Dad's Heart",
         "함께하는 저녁 시간 – Shared Evening Time",
         "달라도 괜찮아 – It's Okay to Be Different"
-
     ]
 
     # Create three different conversation table days
     days = ["9/23/M", "10/8/T", "11/14/TH"]
-
-    # Filepath for reservations CSV
-    reservation_file = 'reservations.csv'
-
-    # Load existing reservations from CSV if it exists
-    if os.path.exists(reservation_file):
-        reservation_data = pd.read_csv(reservation_file)
-    else:
-        # Create an empty DataFrame if the file does not exist
-        reservation_data = pd.DataFrame(columns=["Book", "Reserved By", "Day"])
-
-
-    
 
     # Select a book from the list
     selected_book = st.selectbox("Select a book", books)
@@ -181,6 +163,12 @@ with tab2:
             reservation_data.to_csv(csv_file_path, index=False)
             
             st.success(f"You have reserved {selected_book} for {selected_day}.")
+
+    # Clear button to reset reservations
+    if st.button("Clear Reservations"):
+        reservation_data = pd.DataFrame(columns=["Book", "Reserved By", "Day"])  # Empty DataFrame
+        reservation_data.to_csv(csv_file_path, index=False)  # Save empty DataFrame to CSV
+        st.success("All reservations have been cleared.")
 
     # Display the DataFrame (CSV file)
     if not reservation_data.empty:
