@@ -295,12 +295,6 @@ with tab4:
     data = sheet.get_all_records()
     reservation_data = pd.DataFrame(data)
 
-
-    # Display data in Streamlit
-    st.write("Current Reservations:")
-    st.dataframe(reservation_data)
-
-
     # Ensure the DataFrame has the correct columns if it's empty
     if reservation_data.empty:
         reservation_data = pd.DataFrame(columns=["Book", "Reserved By", "Day"])
