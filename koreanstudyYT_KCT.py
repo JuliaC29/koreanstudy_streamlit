@@ -7,6 +7,9 @@ from googleapiclient.errors import HttpError
 from googletrans import Translator
 import re
 import os
+import json
+import gspread
+from google.oauth2.service_account import Credentials
 
 
 # Set up logging
@@ -264,12 +267,43 @@ with tab3:
 
 
 with tab4:
-    # Create a list of books
+    # Load Google service account credentials from Streamlit secrets
+    credentials_dict = st.secrets["google_service_account"]
+    credentials = Credentials.from_service_account_info(credentials_dict)
+
+    # Authorize the client
+    client = gspread.authorize(credentials)
+
+
+    # Google Sheet ID (get it from the URL of your Google Sheet)
+    spreadsheet_id = '1uUZAt-s-P6fBza2sbwEuAn63I10bCZQbi5hHQuKZP30'
+    sheet_name = 'F24'  # Update with your Google Sheet tab name
+
+    # Open the Google Sheet
+    sheet = client.open_by_key(spreadsheet_id).worksheet(sheet_name)
+
+    # Read data from Google Sheets into a DataFrame
+    data = sheet.get_all_records()
+    reservation_data = pd.DataFrame(data)
+
+
+    # Display data in Streamlit
+    st.write("Current Reservations:")
+    st.dataframe(reservation_data)
+
+
+    # Ensure the DataFrame has the correct columns if it's empty
+    if reservation_data.empty:
+        reservation_data = pd.DataFrame(columns=["Book", "Reserved By", "Day"])
+
+    # Sample Streamlit UI for reservations
+    st.title("Book Reservations")
+
     books = [
         "호랑이와 곶감 – The Tiger and the Persimmon",
-        "빨간 부채 파란 부채 – The Red Fan and the Blue Fan",
+        "빨간부채 파란부채 – The Red Fan and the Blue Fan",
         "열두 띠 이야기 – The Story of the Twelve Zodiac Animals",
-        "방귀 시합 – The Fart Contest",
+        "방귀시합 – The Fart Contest",
         "단군 이야기 – The Story of Dangun",
         "재주 많은 오형제 – The Five Brothers with Many Talents",
         "무엇이든 될 수 있어 – You Can Be Anything",
@@ -279,107 +313,27 @@ with tab4:
         "달라도 괜찮아 – It's Okay to Be Different"
     ]
 
-    # Create three different conversation table days
-    days = ["9/23/M", "10/8/T", "11/14/TH"]
-
-    # Filepath for reservations CSV
-    reservation_file = 'data/reservations.csv'
-
-    # Load existing reservations from CSV if it exists
-    if os.path.exists(reservation_file):
-        reservation_data = pd.read_csv(reservation_file)
-    else:
-        # Create an empty DataFrame if the file does not exist
-        reservation_data = pd.DataFrame(columns=["Book", "Reserved By", "Day"])
-
     # Select a book from the list
-    selected_book = st.selectbox("Select a book", books)
-
-    # Select a conversation day
-    selected_day = st.selectbox("Select a day", days)
-
-    # Enter the name of the person reserving the book
-    reserver_name = st.text_input("Enter your name to reserve this book:")
-
-    # # Reserve button
-    # if st.button("Reserve"):
-    #     # Check if the book is already reserved for the selected day
-    #     existing_reservation = reservation_data[
-    #         (reservation_data["Book"] == selected_book) &
-    #         (reservation_data["Day"] == selected_day)
-    #     ]
-        
-    #     if not existing_reservation.empty:
-    #         st.error(f"Sorry, {selected_book} is already reserved for {selected_day}.")
-    #     else:
-    #         # Add the reservation to the DataFrame
-    #         new_reservation = pd.DataFrame({
-    #             "Book": [selected_book],
-    #             "Reserved By": [reserver_name],
-    #             "Day": [selected_day]
-    #         })
-    #         reservation_data = pd.concat([reservation_data, new_reservation], ignore_index=True)
-            
-    #         # Save the updated reservations to the CSV file in the 'data' folder
-    #         reservation_data.to_csv(csv_file_path, index=False)
-            
-    #         st.success(f"You have reserved {selected_book} for {selected_day}.")
-
-    # # Clear button to reset reservations
-    # if st.button("Clear Reservations"):
-    #     reservation_data = pd.DataFrame(columns=["Book", "Reserved By", "Day"])  # Empty DataFrame
-    #     reservation_data.to_csv(csv_file_path, index=False)  # Save empty DataFrame to CSV
-    #     st.success("All reservations have been cleared.")
-
-    # # Display the DataFrame (CSV file)
-    # if not reservation_data.empty:
-    #     st.markdown('<div class="dataframe-container">', unsafe_allow_html=True)
-    #     st.dataframe(reservation_data)
-    #     st.markdown('</div>', unsafe_allow_html=True)
-    # else:
-    #     st.write("No books have been reserved yet.")
-
-
-
+    selected_book = st.selectbox("Select a book:", books)
+    
+    # Add the "Day" selection field
+    selected_day = st.selectbox("Select a day:", ["9/23/M", "10/8/T", "11/14/TH"])
+    
+    reserver_name = st.text_input("Enter your name:")
 
     # Reserve button
     if st.button("Reserve"):
-        # Check if the book is already reserved for the selected day
-        existing_reservation = reservation_data[
-            (reservation_data["Book"] == selected_book) &
-            (reservation_data["Day"] == selected_day)
-        ]
-        
-        if not existing_reservation.empty:
-            st.error(f"Sorry, {selected_book} is already reserved for {selected_day}.")
-        else:
-            # Add the reservation to the DataFrame
-            new_reservation = pd.DataFrame({
-                "Book": [selected_book],
-                "Reserved By": [reserver_name],
-                "Day": [selected_day]
-            })
+        if reserver_name:
+            # Add the new reservation to the DataFrame
+            new_reservation = pd.DataFrame({"Book": [selected_book], "Reserved By": [reserver_name], "Day": [selected_day]})
             reservation_data = pd.concat([reservation_data, new_reservation], ignore_index=True)
             
-            # Save the updated reservations to the CSV file
-            reservation_data.to_csv(reservation_file, index=False)
-            
-            st.success(f"You have reserved {selected_book} for {selected_day}.")
+            # Update Google Sheet with new data
+            sheet.update([reservation_data.columns.values.tolist()] + reservation_data.values.tolist())
+            st.success(f"Reserved {selected_book} for {reserver_name}")
+        else:
+            st.error("Please enter your name")
 
     # Display current reservations
-    # st.markdown(
-    #     """
-    #     <div font-size: 20px;">
-    #         Please pick up your reserved book at New Cabell Hall 138 at 5:05 PM.
-    #     </div>
-    #     """, 
-    #     unsafe_allow_html=True)
-   
- 
-    # Display the DataFrame (CSV file)
-    if not reservation_data.empty:
-        st.markdown('<div class="dataframe-container">', unsafe_allow_html=True)
-        st.dataframe(reservation_data)
-        st.markdown('</div>', unsafe_allow_html=True)
-    else:
-        st.write("No books have been reserved yet.")
+    st.write("Current Reservations:")
+    st.dataframe(reservation_data)
