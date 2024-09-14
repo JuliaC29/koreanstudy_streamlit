@@ -266,10 +266,8 @@ if os.path.exists(csv_file_path):
 else:
     reservation_data = pd.DataFrame(columns=["Book", "Reserved By", "Day"])
 
-# Your existing code for working with the CSV file...
 # Ensure when saving the file, it's saved in the same location:
 reservation_data.to_csv(csv_file_path, index=False)
-
 
 
 with tab4:
@@ -296,22 +294,11 @@ with tab4:
     # Create three different conversation table days
     days = ["9/23/M", "10/8/T", "11/14/TH"]
 
-    # Filepath for reservations CSV
-    reservation_file = 'reservations.csv'
-
-    # Load existing reservations from CSV if it exists
-    if os.path.exists(reservation_file):
-        reservation_data = pd.read_csv(reservation_file)
-    else:
-        # Create an empty DataFrame if the file does not exist
-        reservation_data = pd.DataFrame(columns=["Book", "Reserved By", "Day"])
-
-    # Display the list of books and reservation form
-    #st.title("Korean Conversation Table - Book Reservations")
-
-    #st.write("**Choose a book to reserve and enter your name:**")
     
+    # Filepath for reservations CSV
+    reservation_data.to_csv(csv_file_path, index=False)
 
+  
     # Select a book from the list
     selected_book = st.selectbox("Select a book", books)
 
@@ -344,9 +331,6 @@ with tab4:
             reservation_data.to_csv(reservation_file, index=False)
             
             st.success(f"You have reserved {selected_book} for {selected_day}.")
-
-
-   
  
     # Display the DataFrame (CSV file)
     if not reservation_data.empty:
