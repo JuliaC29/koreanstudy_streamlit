@@ -301,13 +301,13 @@ with tab4:
     # Center the text and change the font size
     st.markdown(
     """
-    <h2 style="text-align: center; font-size: 24px;">
+    <h2 style="text-align: center; font-size: 28px;">
         Book Reservations
     </h2>
     """,
     unsafe_allow_html=True
 )
-    #st.title("Book Reservations")
+
 
     books = [
         "호랑이와 곶감 – The Tiger and the Persimmon",
