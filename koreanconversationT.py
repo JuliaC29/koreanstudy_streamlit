@@ -49,15 +49,15 @@ st.markdown(
 # Define file path for reservations CSV in the 'data' folder
 csv_file_path = os.path.join("data", "reservations.csv")
 
+# Ensure the 'data' folder exists
+if not os.path.exists("data"):
+    os.makedirs("data")
+
 # Check if the CSV file exists, if not create an empty DataFrame
 if os.path.exists(csv_file_path):
     reservation_data = pd.read_csv(csv_file_path)
 else:
     reservation_data = pd.DataFrame(columns=["Book", "Reserved By", "Day"])
-
-# Your existing code for working with the CSV file...
-# Ensure when saving the file, it's saved in the same location:
-reservation_data.to_csv(csv_file_path, index=False)
 
 
 # Title 
@@ -146,10 +146,7 @@ with tab2:
         # Create an empty DataFrame if the file does not exist
         reservation_data = pd.DataFrame(columns=["Book", "Reserved By", "Day"])
 
-    # Display the list of books and reservation form
-    #st.title("Korean Conversation Table - Book Reservations")
 
-    #st.write("**Choose a book to reserve and enter your name:**")
     
 
     # Select a book from the list
@@ -180,14 +177,11 @@ with tab2:
             })
             reservation_data = pd.concat([reservation_data, new_reservation], ignore_index=True)
             
-            # Save the updated reservations to the CSV file
-            reservation_data.to_csv(reservation_file, index=False)
+            # Save the updated reservations to the CSV file in the 'data' folder
+            reservation_data.to_csv(csv_file_path, index=False)
             
             st.success(f"You have reserved {selected_book} for {selected_day}.")
 
-
-   
- 
     # Display the DataFrame (CSV file)
     if not reservation_data.empty:
         st.markdown('<div class="dataframe-container">', unsafe_allow_html=True)
