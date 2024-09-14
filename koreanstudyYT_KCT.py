@@ -269,8 +269,8 @@ with tab3:
 with tab4:
 
     # Define the correct Google Sheets scopes
-    SCOPE = ["https://spreadsheets.google.com/feeds", 'https://www.googleapis.com/auth/spreadsheets',
-            "https://www.googleapis.com/auth/drive.file", "https://www.googleapis.com/auth/drive"]
+    SCOPE = ["https://www.googleapis.com/auth/spreadsheets",  # Access to Google Sheets
+            "https://www.googleapis.com/auth/drive.file"]    # Allows access to files created or opened by the app
 
 
     # Load Google service account credentials from Streamlit secrets
