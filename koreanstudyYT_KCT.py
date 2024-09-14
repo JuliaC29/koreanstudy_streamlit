@@ -51,22 +51,6 @@ def get_lesson_link(lesson):
 
 
 
-# Define file path for reservations CSV in the 'data' folder
-#csv_file_path = os.path.join("data", "reservations.csv")
-csv_file_path = 'data/reservations.csv'
-
-# Ensure the 'data' folder exists
-if not os.path.exists("data"):
-    os.makedirs("data")
-
-# Check if the CSV file exists, if not create an empty DataFrame
-if os.path.exists(csv_file_path):
-    reservation_data = pd.read_csv(csv_file_path)
-else:
-    reservation_data = pd.DataFrame(columns=["Book", "Reserved By", "Day"])
-
-
-
 
 
 # Load API key from Streamlit secrets and initialize YouTube API client
@@ -298,6 +282,16 @@ with tab4:
     # Create three different conversation table days
     days = ["9/23/M", "10/8/T", "11/14/TH"]
 
+    # Filepath for reservations CSV
+    reservation_file = 'data/reservations.csv'
+
+    # Load existing reservations from CSV if it exists
+    if os.path.exists(reservation_file):
+        reservation_data = pd.read_csv(reservation_file)
+    else:
+        # Create an empty DataFrame if the file does not exist
+        reservation_data = pd.DataFrame(columns=["Book", "Reserved By", "Day"])
+
     # Select a book from the list
     selected_book = st.selectbox("Select a book", books)
 
@@ -306,6 +300,47 @@ with tab4:
 
     # Enter the name of the person reserving the book
     reserver_name = st.text_input("Enter your name to reserve this book:")
+
+    # # Reserve button
+    # if st.button("Reserve"):
+    #     # Check if the book is already reserved for the selected day
+    #     existing_reservation = reservation_data[
+    #         (reservation_data["Book"] == selected_book) &
+    #         (reservation_data["Day"] == selected_day)
+    #     ]
+        
+    #     if not existing_reservation.empty:
+    #         st.error(f"Sorry, {selected_book} is already reserved for {selected_day}.")
+    #     else:
+    #         # Add the reservation to the DataFrame
+    #         new_reservation = pd.DataFrame({
+    #             "Book": [selected_book],
+    #             "Reserved By": [reserver_name],
+    #             "Day": [selected_day]
+    #         })
+    #         reservation_data = pd.concat([reservation_data, new_reservation], ignore_index=True)
+            
+    #         # Save the updated reservations to the CSV file in the 'data' folder
+    #         reservation_data.to_csv(csv_file_path, index=False)
+            
+    #         st.success(f"You have reserved {selected_book} for {selected_day}.")
+
+    # # Clear button to reset reservations
+    # if st.button("Clear Reservations"):
+    #     reservation_data = pd.DataFrame(columns=["Book", "Reserved By", "Day"])  # Empty DataFrame
+    #     reservation_data.to_csv(csv_file_path, index=False)  # Save empty DataFrame to CSV
+    #     st.success("All reservations have been cleared.")
+
+    # # Display the DataFrame (CSV file)
+    # if not reservation_data.empty:
+    #     st.markdown('<div class="dataframe-container">', unsafe_allow_html=True)
+    #     st.dataframe(reservation_data)
+    #     st.markdown('</div>', unsafe_allow_html=True)
+    # else:
+    #     st.write("No books have been reserved yet.")
+
+
+
 
     # Reserve button
     if st.button("Reserve"):
@@ -326,17 +361,21 @@ with tab4:
             })
             reservation_data = pd.concat([reservation_data, new_reservation], ignore_index=True)
             
-            # Save the updated reservations to the CSV file in the 'data' folder
-            reservation_data.to_csv(csv_file_path, index=False)
+            # Save the updated reservations to the CSV file
+            reservation_data.to_csv(reservation_file, index=False)
             
             st.success(f"You have reserved {selected_book} for {selected_day}.")
 
-    # Clear button to reset reservations
-    if st.button("Clear Reservations"):
-        reservation_data = pd.DataFrame(columns=["Book", "Reserved By", "Day"])  # Empty DataFrame
-        reservation_data.to_csv(csv_file_path, index=False)  # Save empty DataFrame to CSV
-        st.success("All reservations have been cleared.")
-
+    # Display current reservations
+    # st.markdown(
+    #     """
+    #     <div font-size: 20px;">
+    #         Please pick up your reserved book at New Cabell Hall 138 at 5:05 PM.
+    #     </div>
+    #     """, 
+    #     unsafe_allow_html=True)
+   
+ 
     # Display the DataFrame (CSV file)
     if not reservation_data.empty:
         st.markdown('<div class="dataframe-container">', unsafe_allow_html=True)
