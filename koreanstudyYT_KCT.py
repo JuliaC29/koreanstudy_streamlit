@@ -52,7 +52,8 @@ def get_lesson_link(lesson):
 
 
 # Define file path for reservations CSV in the 'data' folder
-csv_file_path = os.path.join("data", "reservations.csv")
+#csv_file_path = os.path.join("data", "reservations.csv")
+csv_file_path = 'data/reservations.csv'
 
 # Ensure the 'data' folder exists
 if not os.path.exists("data"):
