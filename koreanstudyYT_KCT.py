@@ -345,4 +345,8 @@ with tab4:
     else:
         st.write("No books have been reserved yet.")
 
-
+    # Clear button to delete session state and CSV file
+    if st.button("Clear All Reservations"):
+        st.session_state["reservation_data"] = pd.DataFrame(columns=["Book", "Reserved By", "Day"])
+        st.session_state["reservation_data"].to_csv(csv_file_path, index=False)
+        st.success("All reservations cleared.")
