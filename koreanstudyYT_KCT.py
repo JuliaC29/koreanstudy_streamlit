@@ -269,8 +269,6 @@ with tab3:
 with tab4:
 
     # Define the correct Google Sheets scopes
-   
-
 
     SCOPE = ["https://spreadsheets.google.com/feeds", 'https://www.googleapis.com/auth/spreadsheets',
             "https://www.googleapis.com/auth/drive.file", "https://www.googleapis.com/auth/drive"]
@@ -300,7 +298,16 @@ with tab4:
         reservation_data = pd.DataFrame(columns=["Book", "Reserved By", "Day"])
 
     # Sample Streamlit UI for reservations
-    st.title("Book Reservations")
+    # Center the text and change the font size
+    st.markdown(
+    """
+    <h2 style="text-align: center; font-size: 24px;">
+        Book Reservations
+    </h2>
+    """,
+    unsafe_allow_html=True
+)
+    #st.title("Book Reservations")
 
     books = [
         "호랑이와 곶감 – The Tiger and the Persimmon",
