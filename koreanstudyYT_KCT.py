@@ -23,7 +23,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# Load CSV data
+# Load CSV data for Quizlet
 @st.cache_data
 def load_csv_data():
     try:
@@ -47,6 +47,21 @@ def get_lesson_link(lesson):
     except Exception as e:
         logger.error(f"Error in get_lesson_link: {e}")
         return None, None
+
+
+# Define file path for reservations CSV in the 'data' folder
+csv_file_path = os.path.join("data", "reservations.csv")
+
+# Ensure the 'data' folder exists
+if not os.path.exists("data"):
+    os.makedirs("data")
+
+# Check if the CSV file exists, if not create an empty DataFrame
+if os.path.exists(csv_file_path):
+    reservation_data = pd.read_csv(csv_file_path)
+else:
+    reservation_data = pd.DataFrame(columns=["Book", "Reserved By", "Day"])
+
 
 # Load API key from Streamlit secrets and initialize YouTube API client
 try:
@@ -257,18 +272,6 @@ with tab3:
     st.markdown(f'<a href="{contact_url}" style="font-size:16px; padding:10px; background-color:#ffcc00; border-radius:5px; color:black; text-decoration:none;">Click Here to Email Us!</a>', unsafe_allow_html=True)
 
 
-# Define file path for reservations CSV in the 'data' folder
-csv_file_path = os.path.join("data", "reservations.csv")
-
-# Ensure the 'data' folder exists
-if not os.path.exists("data"):
-    os.makedirs("data")
-
-# Check if the CSV file exists, if not create an empty DataFrame
-if os.path.exists(csv_file_path):
-    reservation_data = pd.read_csv(csv_file_path)
-else:
-    reservation_data = pd.DataFrame(columns=["Book", "Reserved By", "Day"])
 
 with tab4:
 
