@@ -160,7 +160,7 @@ def youtube_search_by_link():
 
 # Streamlit app setup with tabs for different sections
 st.markdown("<h1 class='title'>한국어 단어와 문법</h1>", unsafe_allow_html=True)
-tab1, tab2, tab3, tab4= st.tabs(["Vocabulary", "Grammar", "Korean Conversation Table", "Books"])
+tab1, tab2, tab3, tab4, tab5= st.tabs(["Vocabulary", "Grammar", "Korean Conversation Table", "Books", "Reading Practice"])
 
 with tab1:
     lesson = st.selectbox("Select a lesson", lesson_list)
@@ -311,9 +311,9 @@ with tab4:
 
     books = [
         "호랑이와 곶감 – The Tiger and the Persimmon",
-        "빨간부채 파란부채 – The Red Fan and the Blue Fan",
+        "빨간 부채 파란 부채 – The Red Fan and the Blue Fan",
         "열두 띠 이야기 – The Story of the Twelve Zodiac Animals",
-        "방귀시합 – The Fart Contest",
+        "방귀 시합 – The Fart Contest",
         "단군 이야기 – The Story of Dangun",
         "재주 많은 오형제 – The Five Brothers with Many Talents",
         "무엇이든 될 수 있어 – You Can Be Anything",
@@ -347,3 +347,155 @@ with tab4:
     # Display current reservations
     st.write("Current Reservations:")
     st.dataframe(reservation_data)
+
+
+with tab5:
+    # Define the correct Google Sheets scopes
+
+    SCOPE = ["https://spreadsheets.google.com/feeds", 'https://www.googleapis.com/auth/spreadsheets',
+            "https://www.googleapis.com/auth/drive.file", "https://www.googleapis.com/auth/drive"]
+
+
+    # Load Google service account credentials from Streamlit secrets
+    credentials_dict = st.secrets["google_service_account"]
+    credentials = Credentials.from_service_account_info(credentials_dict, scopes=SCOPE)
+
+    # Authorize the client
+    client = gspread.authorize(credentials)
+
+
+    # Google Sheet ID (get it from the URL of your Google Sheet)
+    spreadsheet_id = '1uUZAt-s-P6fBza2sbwEuAn63I10bCZQbi5hHQuKZP30'
+    sheet_name = 'F24'  # Update with your Google Sheet tab name
+
+    # Access the Google Sheet
+    sheet = client.open_by_key(spreadsheet_id).worksheet(sheet_name)
+
+    # Read data from Google Sheets into a DataFrame
+    data = sheet.get_all_records()
+    reservation_data = pd.DataFrame(data)
+
+    # Ensure the DataFrame has the correct columns if it's empty
+    if reservation_data.empty:
+        reservation_data = pd.DataFrame(columns=["Name", "Email", "Course", "Role", "Date", "Start Time", "End Time"])
+
+   
+    # Center the text and change the font size
+    st.markdown(
+    """
+    <h2 style="text-align: center; font-size: 28px;">
+        Submit Your Availability
+    </h2>
+    """,
+    unsafe_allow_html=True
+    )
+
+    # Collect form input
+    name = st.text_input("Name")
+    email = st.text_input("Email")
+
+    # Role selection
+    role = st.selectbox("Are you a student or a native speaker?", ["Student", "Native Speaker"])
+
+    # Only show the course dropdown for students
+    if role == "Student":
+        course = st.selectbox("Select your course:", ["KOR1010", "KOR1060", "KOR2010", "KOR3010"])
+    else:
+        course = "NA"  # No course needed for native speakers
+
+    available_date = st.date_input("Select available date")
+    start_time = st.time_input("Select start time")
+    end_time = st.time_input("Select end time")
+
+    # Convert times to strings
+    available_date_str = available_date.strftime('%Y-%m-%d')
+    start_time_str = start_time.strftime('%H:%M')
+    end_time_str = end_time.strftime('%H:%M')
+
+    # Submit availability button
+    if st.button("Submit Availability"):
+        if name and email:
+            # Add the new reservation to the DataFrame
+            new_reservation = pd.DataFrame({
+                "Name": [name], 
+                "Email": [email], 
+                "Course": [course],
+                "Role": [role], 
+                "Date": [available_date_str],  
+                "Start Time": [start_time_str], 
+                "End Time": [end_time_str]
+            })
+            reservation_data = pd.concat([reservation_data, new_reservation], ignore_index=True)
+            
+            # Update Google Sheet with new data
+            sheet.update([reservation_data.columns.values.tolist()] + reservation_data.values.tolist())
+            
+            st.success(f"Availability submitted for {name}!")
+        else:
+            st.error("Please enter your name and email.")
+
+
+
+    # Overlap checking logic with time handling
+    def check_overlap(student_start, student_end, speaker_start, speaker_end):
+        student_start_dt = datetime.combine(datetime.today(), student_start)
+        student_end_dt = datetime.combine(datetime.today(), student_end)
+        speaker_start_dt = datetime.combine(datetime.today(), speaker_start)
+        speaker_end_dt = datetime.combine(datetime.today(), speaker_end)
+
+        # Handle cases where end time is past midnight
+        if student_end_dt < student_start_dt:
+            student_end_dt += timedelta(days=1)
+        if speaker_end_dt < speaker_start_dt:
+            speaker_end_dt += timedelta(days=1)
+
+        return max(student_start_dt, speaker_start_dt) < min(student_end_dt, speaker_end_dt)
+
+    # Check for overlaps between students and native speakers
+    students = reservation_data[reservation_data["Role"] == "Student"]
+    speakers = reservation_data[reservation_data["Role"] == "Native Speaker"]
+
+    found_overlap = False
+    for _, student in students.iterrows():
+        student_start = datetime.strptime(student["Start Time"], '%H:%M').time()
+        student_end = datetime.strptime(student["End Time"], '%H:%M').time()
+        student_date = student["Date"]
+
+        for _, speaker in speakers.iterrows():
+            speaker_start = datetime.strptime(speaker["Start Time"], '%H:%M').time()
+            speaker_end = datetime.strptime(speaker["End Time"], '%H:%M').time()
+            speaker_date = speaker["Date"]
+
+            if student_date == speaker_date and check_overlap(student_start, student_end, speaker_start, speaker_end):
+                st.success(f"Overlap found on {student_date} from {student['Start Time']} to {student['End Time']}")
+                found_overlap = True
+
+    if not found_overlap:
+        st.error("No overlapping availabilities found.")
+
+    # Display current availability in a grid format
+    # Center the text and change the font size
+    st.markdown(
+    """
+    <h2 style="text-align: center; font-size: 28px;">
+        View Availability
+    </h2>
+    """,
+    unsafe_allow_html=True
+    )
+
+    if not reservation_data.empty:
+        # Sort the data by Date and then by Start Time
+        reservation_data = reservation_data.sort_values(by=['Date', 'Start Time'])
+
+        # Display the availability grid with color coding
+        for _, row in reservation_data.iterrows():
+            color = "#ADD8E6" if row["Role"] == "Student" else "#90EE90"  # Light blue for students, green for native speakers
+            st.markdown(f"""
+            <div style='background-color:{color}; padding: 10px; margin: 5px; border-radius: 5px;'>
+            <strong>{row['Role']} ({row['Course']})</strong>  <br> {row['Date']} <strong>Time {row['Start Time']}-{row['End Time']}</strong>
+            </div>
+            """, unsafe_allow_html=True)
+
+    else:
+        st.write("No availability submitted yet.")
