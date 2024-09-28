@@ -93,7 +93,6 @@ def format_time(seconds):
     hours, minutes = divmod(minutes, 60)
     return f"{hours:02d}:{minutes:02d}:{seconds:02d}"
 
-
 # Function to embed YouTube video with HTML iframe starting at a specific timestamp
 def embed_youtube_video(video_id, start_time_seconds):
     youtube_url = f"https://www.youtube.com/embed/{video_id}?start={start_time_seconds}"
@@ -113,11 +112,6 @@ def display_video_segments(video_id, matches):
         # Embed the video using the HTML iframe method starting at the matched timestamp
         embed_youtube_video(video_id, int(start_time))
 
-# Function to format time from seconds to HH:MM:SS
-def format_time(seconds):
-    minutes, seconds = divmod(int(seconds), 60)
-    hours, minutes = divmod(minutes, 60)
-    return f"{hours:02d}:{minutes:02d}:{seconds:02d}"
 
 # Main function to call the YouTube search tab
 def youtube_search_tab():
