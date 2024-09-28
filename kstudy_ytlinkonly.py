@@ -64,15 +64,20 @@ def get_caption_with_timestamps(video_id):
         st.warning(f"Captions not available for video {video_id}: {str(e)}")
         return None
 
-# Function to search for a specific phrase in the captions
+# Function to search for multiple occurrences of the query in the captions and provide full sentences
 def search_caption_with_context(transcript, query):
     matches = []
-    for entry in transcript:
+    for i, entry in enumerate(transcript):
         if query.lower() in entry['text'].lower():
-            start_time = entry['start']
-            full_text = entry['text']
-            matches.append((start_time, full_text))
+            # Collect the surrounding context to form a full sentence
+            start = max(0, i - 1)  # Include the previous sentence if available
+            end = min(len(transcript), i + 1)  # Include the next sentence if available
+            context = transcript[start:end]
+            full_sentence = ' '.join([item['text'] for item in context])
+            start_time = context[0]['start']
+            matches.append((start_time, full_sentence))
     return matches
+
 
 # Function to translate text from Korean to English
 def translate_text(text):
@@ -97,36 +102,49 @@ def embed_youtube_video(video_id, start_time_seconds):
     """
     st.markdown(video_html, unsafe_allow_html=True)
 
-# Function to handle the YouTube link and caption search
-def youtube_search_by_link():
-    st.header("YouTube Caption Search by Link")
-    youtube_url = st.text_input("Paste the YouTube link here:")
+# Function to display video segments with multiple timestamps using HTML iframe
+def display_video_segments(video_id, matches):
+    for start_time, text in matches:
+        formatted_time = format_time(start_time)
+        english_translation = translate_text(text)
+        st.write(f"**[{formatted_time}]** {text}")
+        st.write(f"Translation: {english_translation}")
+        
+        # Embed the video using the HTML iframe method starting at the matched timestamp
+        embed_youtube_video(video_id, int(start_time))
+
+# Function to format time from seconds to HH:MM:SS
+def format_time(seconds):
+    minutes, seconds = divmod(int(seconds), 60)
+    hours, minutes = divmod(minutes, 60)
+    return f"{hours:02d}:{minutes:02d}:{seconds:02d}"
+
+# Main function to call the YouTube search tab
+def youtube_search_tab():
+    st.header("YouTube Caption Search")
+    youtube_link = st.text_input("Enter YouTube link:")
     search_term = st.text_input("Enter a Korean grammar point or phrase:")
-    
+
     if st.button("Search"):
-        if youtube_url:
-            video_id = extract_video_id(youtube_url)
-            if video_id:
+        if not youtube:
+            st.error("YouTube API client is not initialized.")
+            return
+
+        if youtube_link and search_term:
+            try:
+                video_id = youtube_link.split('v=')[1]
                 transcript = get_caption_with_timestamps(video_id)
                 if transcript:
                     matches = search_caption_with_context(transcript, search_term)
                     if matches:
-                        # Use the first match to show video starting at the correct timestamp
-                        timestamp, text = matches[0]
-                        formatted_time = format_time(timestamp)
-                        st.write(f"**[{formatted_time}]** {text}")
-                        
-                        english_translation = translate_text(text)
-                        st.write(f"Translation: {english_translation}")
-                        
-                        # Embed the video using an iframe with the correct timestamp
-                        embed_youtube_video(video_id, int(timestamp))
+                        st.write(f"### Matches found for '{search_term}' in the video:")
+                        display_video_segments(video_id, matches)
                     else:
                         st.write("No matching captions found. Try a different search term.")
-                else:
-                    st.write("Captions are not available for this video.")
+            except Exception as e:
+                st.error(f"An error occurred during the search: {str(e)}")
         else:
-            st.write("Please provide a valid YouTube link.")
+            st.write("Please enter both a YouTube link and a search term.")
 
 
 # Streamlit app
@@ -136,7 +154,7 @@ tab1= st.tabs(["Youtube Caption Search"])
 
 with tab1[0]:
     # Main function to call the YouTube search tab
-        youtube_search_by_link()
+        youtube_search_tab()
 
 
 
