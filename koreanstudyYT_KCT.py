@@ -100,13 +100,14 @@ def search_caption_with_context(transcript, query):
     for i, entry in enumerate(transcript):
         if query.lower() in entry['text'].lower():
             # Collect the surrounding context to form a full sentence
-            start = max(0, i - 1)  # Include the previous sentence if available
-            end = min(len(transcript), i + 2)  # Include the next sentence if available
+            start = i
+            end = min(len(transcript), i + 3)  # Include the next sentence if available
             context = transcript[start:end]
             full_sentence = ' '.join([item['text'] for item in context])
             start_time = context[0]['start']
             matches.append((start_time, full_sentence))
     return matches
+
 
 
 # Function to translate text from Korean to English
