@@ -533,10 +533,10 @@ with tab6:
     )
 
     # Centered subheader with adjusted font size
-    st.markdown('<div class="center-text">Shea House</div>', unsafe_allow_html=True)
+    st.markdown('<div class="center-text">Poster Here</div>', unsafe_allow_html=True)
 
     # Path to the uploaded image (you can place the image in this directory manually)
-    image_path = "data/Shea Poster-2.png"
+    image_path = "data/photo file name.png"
 
     # Check if the image file exists
     if os.path.exists(image_path):
