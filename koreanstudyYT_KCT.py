@@ -176,7 +176,7 @@ def youtube_search_tab():
 
 # Streamlit app setup with tabs for different sections
 st.markdown("<h1 class='title'>한국어 단어와 문법</h1>", unsafe_allow_html=True)
-tab1, tab2, tab3, tab4, tab5= st.tabs(["Vocabulary", "Grammar", "Korean Conversation Table", "Books", "Reading Practice"])
+tab1, tab2, tab3, tab4, tab5, tab6= st.tabs(["Vocabulary", "Grammar", "Korean Conversation Table", "Books", "Reading Practice", "Poster"])
 
 with tab1:
     lesson = st.selectbox("Select a lesson", lesson_list)
@@ -515,3 +515,46 @@ with tab5:
 
     else:
         st.write("No availability submitted yet.")
+
+with tab6:
+
+    # Custom CSS for centering and adjusting the font size
+    st.markdown(
+    """
+    <style>
+    .center-text {
+        text-align: center;
+        font-size: 24px; /* Adjust font size here */
+        font-weight: bold;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+    )
+
+    # Centered subheader with adjusted font size
+    st.markdown('<div class="center-text">Shea House</div>', unsafe_allow_html=True)
+
+    # Path to the uploaded image (you can place the image in this directory manually)
+    image_path = "data/Shea Poster-2.png"
+
+    # Check if the image file exists
+    if os.path.exists(image_path):
+        # Read the image and encode it in base64
+        with open(image_path, "rb") as image_file:
+            img_data = base64.b64encode(image_file.read()).decode('utf-8')
+
+        # Display the image in the middle using HTML
+        st.markdown(
+        """
+        <div style='display: flex; justify-content: center;'>
+        <img src='data:image/png;base64,{img}', width=1000>    
+        </div>
+        """.format(img=img_data),
+        unsafe_allow_html=True
+        )
+
+        # # Alternatively, using the Streamlit image function to display the image
+        # st.image(Image.open(image_path), width=1000)  # Adjust the width value to make it bigger
+    else:
+        st.write("No image found. Please upload an image to the specified folder.")
