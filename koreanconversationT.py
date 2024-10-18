@@ -90,7 +90,7 @@ with tab1:
         "<span class='dot-icon'>🔵</span> September 23 (M)": "5:15 PM - 6:45 PM",
         "<span class='dot-icon'>🟢</span> October 8 (T)": "5:15 PM - 6:45 PM",
         "<span class='dot-icon'>🔴</span> October 29 (T), K-Movie Night": "5 PM - 7 PM",
-        "<span class='dot-icon'>🟡</span> November 4 (M)": "5:15 PM - 6:45 PM"
+        "<span class='dot-icon'>🟡</span> November 12 (T)": "5:15 PM - 6:45 PM"
     }
 
     for date, time in dates.items():
