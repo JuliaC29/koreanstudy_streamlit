@@ -175,7 +175,7 @@ with tab2:
     selected_book = st.selectbox("Select a book:", books)
     
     # Add the "Day" selection field
-    selected_day = st.selectbox("Select a day:", ["9/23/M", "10/8/T", "11/14/TH"])
+    selected_day = st.selectbox("Select a day:", ["9/23/M", "10/8/T", "11/12/T"])
     
     reserver_name = st.text_input("Enter your name:")
 
