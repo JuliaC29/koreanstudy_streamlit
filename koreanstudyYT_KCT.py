@@ -68,24 +68,6 @@ def get_lesson_link(lesson):
 
 
 
-# API Key input section
-with st.expander("Use your YouTube API Key"):   
-    user_api_key = st.text_input(
-        "Enter your YouTube API Key",
-        type="password",
-        help="Get your API key from Google Cloud Console"
-    )
-    
-    if st.button("How to get an API Key"):
-        st.markdown("""
-        1. Go to [Google Cloud Console](https://console.cloud.google.com/)
-        2. Create a new project or select an existing one
-        3. Enable the YouTube Data API v3
-        4. Go to Credentials
-        5. Click Create Credentials > API Key
-        6. Copy the API key and paste it above
-        """)
-
 # Modify the existing API initialization to use user's key if provided
 try:
     API_KEY = user_api_key if user_api_key else st.secrets['youtube_api']
@@ -206,6 +188,24 @@ def youtube_search_tab():
 # Streamlit app setup with tabs for different sections
 st.markdown("<h1 class='title'>한국어 단어와 문법</h1>", unsafe_allow_html=True)
 tab1, tab2, tab3, tab4, tab5, tab6= st.tabs(["Vocabulary", "Grammar", "Korean Conversation Table", "Books", "Reading Practice", "Poster"])
+
+# API Key input section
+with st.expander("Use your YouTube API Key"):   
+    user_api_key = st.text_input(
+        "Enter your YouTube API Key",
+        type="password",
+        help="Get your API key from Google Cloud Console"
+    )
+    
+    if st.button("How to get an API Key"):
+        st.markdown("""
+        1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+        2. Create a new project or select an existing one
+        3. Enable the YouTube Data API v3
+        4. Go to Credentials
+        5. Click Create Credentials > API Key
+        6. Copy the API key and paste it above
+        """)
 
 with tab1:
     lesson = st.selectbox("Select a lesson", lesson_list)
