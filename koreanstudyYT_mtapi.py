@@ -49,21 +49,6 @@ def get_lesson_link(lesson):
         return None, None
 
 
-# Load multiple YouTube API keys from Streamlit secrets and initialize the YouTube API client.
-# The system attempts to initialize the API using the first available key.
-# If a key exceeds its usage quota (HTTP 403 error), it automatically switches to the next key in the list.
-# If all keys are exhausted, an exception is raised.
-
-# Modify the existing API initialization to use user's key if provided
-try:
-    API_KEY = user_api_key if user_api_key else st.secrets['youtube_api']
-    youtube = build('youtube', 'v3', developerKey=API_KEY)
-    logger.info("YouTube API client initialized successfully")
-except Exception as e:
-    logger.error(f"Error initializing YouTube API client: {str(e)}")
-    #st.error("Please enter a valid YouTube API key")  
-    youtube = None
-
 # Initialize Google Translator
 translator = Translator()
 
@@ -178,9 +163,9 @@ with tab1:
             st.markdown("Click: " f"[{lesson_code}]({link})", unsafe_allow_html=True)
   
 with tab2:
-        youtube_search_tab()
 
-# API Key input section
+
+        # API Key input section
         with st.expander("Use your YouTube API Key"):   
             user_api_key = st.text_input(
                 "Enter your YouTube API Key",
@@ -198,6 +183,16 @@ with tab2:
                 6. Copy the API key and paste it above
                 """)
 
+        # Modify the existing API initialization to use user's key if provided
+        try:
+            API_KEY = user_api_key if user_api_key else st.secrets['youtube_api']
+            youtube = build('youtube', 'v3', developerKey=API_KEY)
+            logger.info("YouTube API client initialized successfully")
+        except Exception as e:
+            logger.error(f"Error initializing YouTube API client: {str(e)}")
+            #st.error("Please enter a valid YouTube API key")  
+            youtube = None
 
+        youtube_search_tab()
 
 
