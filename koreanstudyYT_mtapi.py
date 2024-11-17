@@ -146,7 +146,7 @@ def youtube_search_tab():
 
     if st.button("Search"):
         if not youtube:
-            st.error("YouTube API client is not initialized.")
+            #st.error("YouTube API client is not initialized.")
             return
 
         if youtube_link and search_term:
