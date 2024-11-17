@@ -189,6 +189,18 @@ def youtube_search_tab():
 st.markdown("<h1 class='title'>한국어 단어와 문법</h1>", unsafe_allow_html=True)
 tab1, tab2, tab3, tab4, tab5, tab6= st.tabs(["Vocabulary", "Grammar", "Korean Conversation Table", "Books", "Reading Practice", "Poster"])
 
+
+with tab1:
+    lesson = st.selectbox("Select a lesson", lesson_list)
+    if lesson:
+        link, lesson_code = get_lesson_link(lesson)
+        if link and lesson_code:
+            st.markdown("Click: " f"[{lesson_code}]({link})", unsafe_allow_html=True)
+  
+with tab2:
+        youtube_search_tab()
+
+
 # API Key input section
 with st.expander("Use your YouTube API Key"):   
     user_api_key = st.text_input(
@@ -207,15 +219,6 @@ with st.expander("Use your YouTube API Key"):
         6. Copy the API key and paste it above
         """)
 
-with tab1:
-    lesson = st.selectbox("Select a lesson", lesson_list)
-    if lesson:
-        link, lesson_code = get_lesson_link(lesson)
-        if link and lesson_code:
-            st.markdown("Click: " f"[{lesson_code}]({link})", unsafe_allow_html=True)
-  
-with tab2:
-        youtube_search_tab()
 
 
 # Tab 3: Korean Conversation Table
