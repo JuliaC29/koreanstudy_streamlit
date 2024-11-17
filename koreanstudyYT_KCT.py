@@ -54,20 +54,49 @@ def get_lesson_link(lesson):
 
 
 
+# # Load API key from Streamlit secrets and initialize YouTube API client
+# try:
+#     API_KEY = st.secrets['youtube_api']
+#     youtube = build('youtube', 'v3', developerKey=API_KEY)
+#     logger.info("YouTube API client initialized successfully")
+#     #st.write("YouTube API client initialized successfully")
+# except Exception as e:
+#     logger.error(f"Error initializing YouTube API client: {str(e)}")
+#     st.error("Error initializing YouTube API. Please check your API key configuration.")
+#     #st.write(f"Error initializing YouTube API client: {str(e)}")
+#     youtube = None
 
 
 
-# Load API key from Streamlit secrets and initialize YouTube API client
+# API Key input section
+with st.expander("Use your YouTube API Key"):   
+    user_api_key = st.text_input(
+        "Enter your YouTube API Key",
+        type="password",
+        help="Get your API key from Google Cloud Console"
+    )
+    
+    if st.button("How to get an API Key"):
+        st.markdown("""
+        1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+        2. Create a new project or select an existing one
+        3. Enable the YouTube Data API v3
+        4. Go to Credentials
+        5. Click Create Credentials > API Key
+        6. Copy the API key and paste it above
+        """)
+
+# Modify the existing API initialization to use user's key if provided
 try:
-    API_KEY = st.secrets['youtube_api']
+    API_KEY = user_api_key if user_api_key else st.secrets['youtube_api']
     youtube = build('youtube', 'v3', developerKey=API_KEY)
     logger.info("YouTube API client initialized successfully")
-    #st.write("YouTube API client initialized successfully")
 except Exception as e:
     logger.error(f"Error initializing YouTube API client: {str(e)}")
-    st.error("Error initializing YouTube API. Please check your API key configuration.")
-    #st.write(f"Error initializing YouTube API client: {str(e)}")
+    #st.error("Please enter a valid YouTube API key")  
     youtube = None
+
+
 
 # Initialize Google Translator
 translator = Translator()
