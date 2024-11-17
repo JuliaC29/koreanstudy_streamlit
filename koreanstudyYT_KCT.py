@@ -68,18 +68,6 @@ def get_lesson_link(lesson):
 
 
 
-# Modify the existing API initialization to use user's key if provided
-try:
-    API_KEY = user_api_key if user_api_key else st.secrets['youtube_api']
-    youtube = build('youtube', 'v3', developerKey=API_KEY)
-    logger.info("YouTube API client initialized successfully")
-except Exception as e:
-    logger.error(f"Error initializing YouTube API client: {str(e)}")
-    #st.error("Please enter a valid YouTube API key")  
-    youtube = None
-
-
-
 # Initialize Google Translator
 translator = Translator()
 
@@ -198,7 +186,7 @@ with tab1:
             st.markdown("Click: " f"[{lesson_code}]({link})", unsafe_allow_html=True)
   
 with tab2:
-        youtube_search_tab()
+        
 
 
         # API Key input section
@@ -219,7 +207,17 @@ with tab2:
                 6. Copy the API key and paste it above
                 """)
 
+                # Modify the existing API initialization to use user's key if provided
+        try:
+            API_KEY = user_api_key if user_api_key else st.secrets['youtube_api']
+            youtube = build('youtube', 'v3', developerKey=API_KEY)
+            logger.info("YouTube API client initialized successfully")
+        except Exception as e:
+            logger.error(f"Error initializing YouTube API client: {str(e)}")
+            #st.error("Please enter a valid YouTube API key")  
+            youtube = None
 
+        youtube_search_tab()
 
 # Tab 3: Korean Conversation Table
 with tab3:
