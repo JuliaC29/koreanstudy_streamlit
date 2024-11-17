@@ -54,32 +54,14 @@ def get_lesson_link(lesson):
 # If a key exceeds its usage quota (HTTP 403 error), it automatically switches to the next key in the list.
 # If all keys are exhausted, an exception is raised.
 
-api_keys = [
-    st.secrets["youtube_api1"],
-    st.secrets["youtube_api2"],
-    st.secrets["youtube_api3"]
-]
-current_key_index = 0
-
-def initialize_youtube_api():
-    global current_key_index
-    while current_key_index < len(api_keys):
-        try:
-            api_key = api_keys[current_key_index].strip()
-            youtube = build('youtube', 'v3', developerKey=api_key)
-            return youtube
-        except HttpError as e:
-            if e.resp.status == 403:
-                current_key_index += 1
-                if current_key_index >= len(api_keys):
-                    raise Exception("All API keys have reached their usage quota.")
-            else:
-                raise e
-
+# Modify the existing API initialization to use user's key if provided
 try:
-    youtube = initialize_youtube_api()
+    API_KEY = user_api_key if user_api_key else st.secrets['youtube_api']
+    youtube = build('youtube', 'v3', developerKey=API_KEY)
+    logger.info("YouTube API client initialized successfully")
 except Exception as e:
-    st.error("Error initializing YouTube API. Please check your API key configuration.")
+    logger.error(f"Error initializing YouTube API client: {str(e)}")
+    #st.error("Please enter a valid YouTube API key")  
     youtube = None
 
 # Initialize Google Translator
@@ -198,7 +180,23 @@ with tab1:
 with tab2:
         youtube_search_tab()
 
-
+# API Key input section
+        with st.expander("Use your YouTube API Key"):   
+            user_api_key = st.text_input(
+                "Enter your YouTube API Key",
+                type="password",
+                help="Get your API key from Google Cloud Console"
+            )
+            
+            if st.button("How to get an API Key"):
+                st.markdown("""
+                1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+                2. Create a new project or select an existing one
+                3. Enable the YouTube Data API v3
+                4. Go to Credentials
+                5. Click Create Credentials > API Key
+                6. Copy the API key and paste it above
+                """)
 
 
 
