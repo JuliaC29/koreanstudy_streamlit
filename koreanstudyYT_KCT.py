@@ -201,23 +201,23 @@ with tab2:
         youtube_search_tab()
 
 
-# API Key input section
-with st.expander("Use your YouTube API Key"):   
-    user_api_key = st.text_input(
-        "Enter your YouTube API Key",
-        type="password",
-        help="Get your API key from Google Cloud Console"
-    )
-    
-    if st.button("How to get an API Key"):
-        st.markdown("""
-        1. Go to [Google Cloud Console](https://console.cloud.google.com/)
-        2. Create a new project or select an existing one
-        3. Enable the YouTube Data API v3
-        4. Go to Credentials
-        5. Click Create Credentials > API Key
-        6. Copy the API key and paste it above
-        """)
+    # API Key input section
+    with st.expander("Use your YouTube API Key"):   
+        user_api_key = st.text_input(
+            "Enter your YouTube API Key",
+            type="password",
+            help="Get your API key from Google Cloud Console"
+        )
+        
+        if st.button("How to get an API Key"):
+            st.markdown("""
+            1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+            2. Create a new project or select an existing one
+            3. Enable the YouTube Data API v3
+            4. Go to Credentials
+            5. Click Create Credentials > API Key
+            6. Copy the API key and paste it above
+            """)
 
 
 
