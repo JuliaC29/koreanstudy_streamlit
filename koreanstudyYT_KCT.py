@@ -392,7 +392,7 @@ with tab4:
 
     # Display current reservations
     st.write("Current Reservations:")
-    #st.dataframe(reservation_data)
+    st.dataframe(reservation_data)
 
 
 with tab5:
