@@ -143,7 +143,6 @@ def display_video_segments(video_id, matches):
         # Embed the video using the HTML iframe method starting at the matched timestamp
         embed_youtube_video(video_id, int(start_time))
 
-
 # Main function to call the YouTube search tab
 def youtube_search_tab():
     st.header("YouTube Caption Search")
@@ -170,6 +169,7 @@ def youtube_search_tab():
                 st.error(f"An error occurred during the search: {str(e)}")
         else:
             st.write("Please enter both a YouTube link and a search term.")
+
 
 
 
@@ -392,7 +392,7 @@ with tab4:
 
     # Display current reservations
     st.write("Current Reservations:")
-    st.dataframe(reservation_data)
+    #st.dataframe(reservation_data)
 
 
 with tab5:
