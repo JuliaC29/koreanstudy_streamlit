@@ -193,7 +193,7 @@ with tab2:
             st.error("Please enter your name")
 
     # Display current reservations
-    st.write("Current Reservations:")
-    st.dataframe(reservation_data)
+    #st.write("Current Reservations:")
+    #st.dataframe(reservation_data)
     
 
