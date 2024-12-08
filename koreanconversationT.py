@@ -71,7 +71,7 @@ with tab1:
 
 
     # Introduction
-    st.markdown("""<div class="header">Fall 2024</div>""", unsafe_allow_html=True)
+    #st.markdown("""<div class="header">Fall 2024</div>""", unsafe_allow_html=True)
     st.markdown("""
     <div class="subheader-content">
     Welcome to our Korean Conversation Table! Whether you're a beginner or advanced learner, 
@@ -85,16 +85,16 @@ with tab1:
     location_url = "https://languagecommons.as.virginia.edu/spaces/language-commons"
     st.markdown(f'<div class="subheader-content"><a href="{location_url}">Language Commons, New Cabell Hall 298</a></div>', unsafe_allow_html=True)
 
-    st.subheader("🕒 Time and Dates")
-    dates = {
-        "<span class='dot-icon'>🔵</span> September 23 (M)": "5:15 PM - 6:45 PM",
-        "<span class='dot-icon'>🟢</span> October 8 (T)": "5:15 PM - 6:45 PM",
-        "<span class='dot-icon'>🔴</span> October 29 (T), K-Movie Night": "5 PM - 7 PM",
-        "<span class='dot-icon'>🟡</span> November 12 (T)": "5:15 PM - 6:45 PM"
-    }
+    # st.subheader("🕒 Time and Dates")
+    # dates = {
+    #     "<span class='dot-icon'>🔵</span> September 23 (M)": "5:15 PM - 6:45 PM",
+    #     "<span class='dot-icon'>🟢</span> October 8 (T)": "5:15 PM - 6:45 PM",
+    #     "<span class='dot-icon'>🔴</span> October 29 (T), K-Movie Night": "5 PM - 7 PM",
+    #     "<span class='dot-icon'>🟡</span> November 12 (T)": "5:15 PM - 6:45 PM"
+    # }
 
-    for date, time in dates.items():
-        st.markdown(f'<div class="subheader-content"><strong>{date}:</strong> {time}</div>', unsafe_allow_html=True)
+    # for date, time in dates.items():
+    #     st.markdown(f'<div class="subheader-content"><strong>{date}:</strong> {time}</div>', unsafe_allow_html=True)
 
 
     # Information
@@ -175,8 +175,9 @@ with tab2:
     selected_book = st.selectbox("Select a book:", books)
     
     # Add the "Day" selection field
-    selected_day = st.selectbox("Select a day:", ["9/23/M", "10/8/T", "11/12/T"])
-    
+    selected_day = st.selectbox("Select a day:", ["N/A"])
+    #selected_day = st.selectbox("Select a day:", ["9/23/M", "10/8/T", "11/12/T"])
+
     reserver_name = st.text_input("Enter your name:")
 
     # Reserve button
