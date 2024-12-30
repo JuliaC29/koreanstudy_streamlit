@@ -317,12 +317,7 @@ with tab2:
                             if matches:
                                 st.write(f"### {title}")
                                 st.write(f"Channel: {channel_title}")
-                                for timestamp, text in matches:
-                                    formatted_time = format_time(timestamp)
-                                    english_translation = translate_text(text)
-                                    st.write(f"**[{formatted_time}]** {text}")
-                                    st.write(f"Translation: {english_translation}")
-                                    st.video(f"https://www.youtube.com/watch?v={video_id}&t={int(timestamp)}s")
+                                display_video_segments(video_id, matches)
                 
                 except Exception as e:
                     st.error(f"An error occurred: {str(e)}")
