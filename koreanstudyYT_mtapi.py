@@ -52,16 +52,6 @@ def get_lesson_link(lesson):
 # Initialize Google Translator
 translator = Translator()
 
-# Function to extract video ID from YouTube link
-def extract_video_id(youtube_url):
-    match = re.search(r"(?<=v=)[\w-]+|(?<=be/)[\w-]+", youtube_url)
-    if match:
-        return match.group(0)
-    else:
-        st.error("Invalid YouTube link")
-        return None
-
-# Function to get captions with timestamps for a specific video
 @st.cache_data(ttl=86400)
 def get_caption_with_timestamps(video_id):
     try:
@@ -73,28 +63,84 @@ def get_caption_with_timestamps(video_id):
         st.warning(f"Captions not available for video {video_id}: {str(e)}")
         return None
 
-# Function to search for multiple occurrences of the query in the captions and provide full sentences
 def search_caption_with_context(transcript, query):
     matches = []
     for i, entry in enumerate(transcript):
         if query.lower() in entry['text'].lower():
             # Collect the surrounding context to form a full sentence
-            start = i
-            end = min(len(transcript), i + 3)  # Include the next sentence if available
+            start = i  
+            end = min(len(transcript), i + 1)  # Include the next sentence if available
             context = transcript[start:end]
             full_sentence = ' '.join([item['text'] for item in context])
             start_time = context[0]['start']
             matches.append((start_time, full_sentence))
     return matches
 
-
-# Function to translate text from Korean to English
 def translate_text(text):
     try:
         return translator.translate(text, src='ko', dest='en').text
     except Exception as e:
         st.warning(f"Translation failed: {str(e)}")
         return "Translation not available"
+
+
+@st.cache_data(ttl=3600)
+def get_channel_videos(channel_id):
+    videos = []
+    next_page_token = None
+    
+    try:
+        while len(videos) < 5:  # Limit to 5 videos per channel
+            request = youtube.search().list(
+                part="id,snippet",
+                channelId=channel_id,
+                maxResults=5,
+                order="viewCount",
+                type="video",
+                pageToken=next_page_token
+            )
+            response = request.execute()
+            
+            videos.extend(response['items'])
+            next_page_token = response.get('nextPageToken')
+            
+            if not next_page_token:
+                break
+    except HttpError as e:
+        logger.error(f"An error occurred while fetching videos for channel {channel_id}: {str(e)}")
+        st.error(f"An error occurred while fetching videos. Please try again later.")
+        return []
+    
+    return videos
+
+@st.cache_data(ttl=3600)
+def search_videos(query, selected_channel_id):  # Added selected_channel_id parameter
+    if not youtube:
+        logger.error("YouTube API client is not initialized")
+        st.error("YouTube search is currently unavailable. Please try again later.")
+        return []
+
+    all_videos = get_channel_videos(selected_channel_id)  # Only search in selected channel
+    
+    # Sort all videos by view count
+    all_videos.sort(key=lambda x: int(get_video_details(x['id']['videoId'])['viewCount']), reverse=True)
+    
+    return all_videos[:5]
+
+
+@st.cache_data(ttl=86400)
+def get_video_details(video_id):
+    try:
+        request = youtube.videos().list(
+            part="statistics",
+            id=video_id
+        )
+        response = request.execute()
+        return response['items'][0]['statistics']
+    except HttpError as e:
+        st.error(f"An error occurred while fetching details for video {video_id}: {str(e)}")
+        return {'viewCount': '0'}
+
 
 # Function to format time from seconds to HH:MM:SS
 def format_time(seconds):
@@ -122,38 +168,9 @@ def display_video_segments(video_id, matches):
         # Embed the video using the HTML iframe method starting at the matched timestamp
         embed_youtube_video(video_id, int(start_time))
 
-
-# Main function to call the YouTube search tab
-def youtube_search_tab():
-    st.header("YouTube Caption Search")
-    youtube_link = st.text_input("Enter YouTube link:")
-    search_term = st.text_input("Enter a Korean grammar point or phrase:")
-
-    if st.button("Search"):
-        if not youtube:
-            #st.error("YouTube API client is not initialized.")
-            return
-
-        if youtube_link and search_term:
-            try:
-                video_id = youtube_link.split('v=')[1]
-                transcript = get_caption_with_timestamps(video_id)
-                if transcript:
-                    matches = search_caption_with_context(transcript, search_term)
-                    if matches:
-                        st.write(f"### Matches found for '{search_term}' in the video:")
-                        display_video_segments(video_id, matches)
-                    else:
-                        st.write("No matching captions found. Try a different search term.")
-            except Exception as e:
-                st.error(f"An error occurred during the search: {str(e)}")
-        else:
-            st.write("Please enter both a YouTube link and a search term.")
-
-
 # Streamlit app setup with tabs for different sections
 st.markdown("<h1 class='title'>한국어 단어와 문법</h1>", unsafe_allow_html=True)
-tab1, tab2 = st.tabs(["Vocabulary", "Grammar"])
+tab1, tab2 = st.tabs(["Quizlet", "YouTube"])
 
 with tab1:
     lesson = st.selectbox("Select a lesson", lesson_list)
@@ -193,6 +210,73 @@ with tab2:
             #st.error("Please enter a valid YouTube API key")  
             youtube = None
 
-        youtube_search_tab()
+        search_method = st.radio(
+        "Choose search method:",
+        ["Search by Channel", "Search by Video Link"]
+        )
+
+        search_term = st.text_input("Enter a Korean grammar point or phrase:")
+
+        if search_method == "Caption Search by Channel":
+            channel_options = {
+                "SBS Running Man": "UCaKod3X1Tn4c7Ci0iUKcvzQ",
+                "youquizontheblock": "UC920m3pMPH45qztdhppZhwA",
+            }
+            selected_channel = st.selectbox("Select Channel", options=list(channel_options.keys()))
+            search_button = st.button("Search in Channel")
+
+            if search_button:
+                if not youtube:
+                    st.error("YouTube search is currently unavailable. Please try again later.")
+                elif search_term:
+                    try:
+                        channel_id = channel_options[selected_channel]
+                        # Pass the selected channel ID to search_videos
+                        results = search_videos(search_term, channel_id)
+                        found_videos = 0
+                        for item in results:
+                            if found_videos >= 1:
+                                break
+                            video_id = item['id']['videoId']
+                            title = item['snippet']['title']
+                            channel_title = item['snippet']['channelTitle']
+                            transcript = get_caption_with_timestamps(video_id)
+                            if transcript:
+                                matches = search_caption_with_context(transcript, search_term)
+                                if matches:
+                                    st.write(f"### {title}")
+                                    st.write(f"Channel: {channel_title}")
+                                    display_video_segments(video_id, matches)
+                        
+                        if found_videos == 0:
+                            st.write("No videos with matching captions found. Try a different search term.")
+                    except Exception as e:
+                        logger.error(f"Error in YouTube search: {str(e)}")
+                        st.error(f"An error occurred during the search. Please try again later.")
+                else:
+                    st.write("Please enter a search term.")
+
+        else:  # Search by Video Link
+            youtube_link = st.text_input("Enter YouTube link:")
+            search_button = st.button("Search in Video")
+
+            if search_button:
+                if not youtube:
+                    st.error("YouTube API client is not initialized.")
+                elif youtube_link and search_term:
+                    try:
+                        video_id = youtube_link.split('v=')[1]
+                        transcript = get_caption_with_timestamps(video_id)
+                        if transcript:
+                            matches = search_caption_with_context(transcript, search_term)
+                            if matches:
+                                st.write(f"### Matches found for '{search_term}' in the video:")
+                                display_video_segments(video_id, matches)
+                            else:
+                                st.write("No matching captions found. Try a different search term.")
+                    except Exception as e:
+                        st.error(f"An error occurred during the search: {str(e)}")
+                else:
+                    st.write("Please enter both a YouTube link and a search term.")
 
 
