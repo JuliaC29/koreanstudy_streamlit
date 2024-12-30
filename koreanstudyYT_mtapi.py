@@ -218,7 +218,7 @@ with tab2:
 
         if search_method == "Caption Search by Channel":
             channel_options = {
-                "SBS Running Man": "UCaKod3X1Tn4c7Ci0iUKcvzQ",
+                #"SBS Running Man": "UCaKod3X1Tn4c7Ci0iUKcvzQ",
                 "youquizontheblock": "UC920m3pMPH45qztdhppZhwA",
             }
             selected_channel = st.selectbox("Select Channel", options=list(channel_options.keys()))
