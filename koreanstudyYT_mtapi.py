@@ -181,7 +181,6 @@ with tab1:
   
 with tab2:
 
-
         # API Key input section
         with st.expander("Use your YouTube API Key"):   
             user_api_key = st.text_input(
@@ -200,7 +199,7 @@ with tab2:
                 6. Copy the API key and paste it above
                 """)
 
-        # Modify the existing API initialization to use user's key if provided
+                # Modify the existing API initialization to use user's key if provided
         try:
             API_KEY = user_api_key if user_api_key else st.secrets['youtube_api']
             youtube = build('youtube', 'v3', developerKey=API_KEY)
