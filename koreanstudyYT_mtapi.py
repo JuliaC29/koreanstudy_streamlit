@@ -113,14 +113,15 @@ def get_channel_videos(channel_id):
     
     return videos
 
+
 @st.cache_data(ttl=3600)
-def search_videos(query, selected_channel_id):  # Added selected_channel_id parameter
+def search_videos(query, channel_id):  # Added selected_channel_id parameter
     if not youtube:
         logger.error("YouTube API client is not initialized")
         st.error("YouTube search is currently unavailable. Please try again later.")
         return []
 
-    all_videos = get_channel_videos(selected_channel_id)  # Only search in selected channel
+    all_videos = get_channel_videos(channel_id)  # Only search in selected channel
     
     # Sort all videos by view count
     all_videos.sort(key=lambda x: int(get_video_details(x['id']['videoId'])['viewCount']), reverse=True)
@@ -180,8 +181,7 @@ with tab1:
             st.markdown("Click: " f"[{lesson_code}]({link})", unsafe_allow_html=True)
   
 with tab2:
-
-    # API Key input section
+    # API Key section
     with st.expander("Use your YouTube API Key"):   
         user_api_key = st.text_input(
             "Enter your YouTube API Key",
@@ -199,70 +199,61 @@ with tab2:
             6. Copy the API key and paste it above
             """)
 
-            # Modify the existing API initialization to use user's key if provided
+    # Initialize YouTube client
     try:
-        API_KEY = user_api_key if user_api_key else st.secrets['youtube_api']
-        youtube = build('youtube', 'v3', developerKey=API_KEY)
+        if user_api_key:
+            youtube = build('youtube', 'v3', developerKey=user_api_key)
+        else:
+            youtube = build('youtube', 'v3', developerKey=st.secrets["youtube_api"])
         logger.info("YouTube API client initialized successfully")
     except Exception as e:
         logger.error(f"Error initializing YouTube API client: {str(e)}")
-        #st.error("Please enter a valid YouTube API key")  
         youtube = None
+    
 
+    # Search methods
     search_method = st.radio(
-    "Choose search method:",
-    ["Search by Channel", "Search by Video Link"]
+        "Choose search method:",
+        ["Search by Video Link", "Search by Channel"]
     )
 
-    search_term = st.text_input("Enter a Korean grammar point or phrase:")
+    search_term = st.text_input("Enter a Korean grammar point or phrase:", key="search_term_tab2")
 
-    if search_method == "Caption Search by Channel":
+    if search_method == "Search by Channel":
         channel_options = {
-            #"SBS Running Man": "UCaKod3X1Tn4c7Ci0iUKcvzQ",
             "youquizontheblock": "UC920m3pMPH45qztdhppZhwA",
         }
         selected_channel = st.selectbox("Select Channel", options=list(channel_options.keys()))
-        search_button = st.button("Search in Channel")
 
-        if search_button:
-            if not youtube:
-                st.error("YouTube search is currently unavailable. Please try again later.")
-            elif search_term:
+        if st.button("Search in Channel", key="channel_search"):
+            if youtube and search_term:
                 try:
                     channel_id = channel_options[selected_channel]
-                    # Pass the selected channel ID to search_videos
                     results = search_videos(search_term, channel_id)
-                    found_videos = 0
+                    
                     for item in results:
-                        if found_videos >= 1:
-                            break
                         video_id = item['id']['videoId']
                         title = item['snippet']['title']
                         channel_title = item['snippet']['channelTitle']
                         transcript = get_caption_with_timestamps(video_id)
+                        
                         if transcript:
                             matches = search_caption_with_context(transcript, search_term)
                             if matches:
                                 st.write(f"### {title}")
                                 st.write(f"Channel: {channel_title}")
                                 display_video_segments(video_id, matches)
-                    
-                    if found_videos == 0:
-                        st.write("No videos with matching captions found. Try a different search term.")
+                
                 except Exception as e:
-                    logger.error(f"Error in YouTube search: {str(e)}")
-                    st.error(f"An error occurred during the search. Please try again later.")
+                    st.error(f"An error occurred: {str(e)}")
             else:
-                st.write("Please enter a search term.")
+                st.error("Please enter a search term and ensure API key is valid")
 
-    else:  # Search by Video Link
-        youtube_link = st.text_input("Enter YouTube link:")
-        search_button = st.button("Search in Video")
-
-        if search_button:
-            if not youtube:
-                st.error("YouTube API client is not initialized.")
-            elif youtube_link and search_term:
+    else:
+        youtube_link = st.text_input("Enter YouTube link:", key="video_link_tab2")
+        
+        if st.button("Search in Video", key="video_search"):
+            if youtube and youtube_link and search_term:
                 try:
                     video_id = youtube_link.split('v=')[1]
                     transcript = get_caption_with_timestamps(video_id)
@@ -272,9 +263,9 @@ with tab2:
                             st.write(f"### Matches found for '{search_term}' in the video:")
                             display_video_segments(video_id, matches)
                         else:
-                            st.write("No matching captions found. Try a different search term.")
+                            st.write("No matching captions found.")
                 except Exception as e:
-                    st.error(f"An error occurred during the search: {str(e)}")
+                    st.error(f"An error occurred: {str(e)}")
             else:
                 st.write("Please enter both a YouTube link and a search term.")
 
