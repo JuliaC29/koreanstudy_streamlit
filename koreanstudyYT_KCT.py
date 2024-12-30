@@ -104,39 +104,11 @@ def translate_text(text):
         return "Translation not available"
 
 
-# @st.cache_data(ttl=3600)
-# def get_channel_videos(channel_id):
-#     videos = []
-#     next_page_token = None
-    
-#     try:
-#         while len(videos) < 5:  # Limit to 5 videos per channel
-#             request = youtube.search().list(
-#                 part="id,snippet",
-#                 channelId=channel_id,
-#                 maxResults=5,
-#                 order="viewCount",
-#                 type="video",
-#                 pageToken=next_page_token
-#             )
-#             response = request.execute()
-            
-#             videos.extend(response['items'])
-#             next_page_token = response.get('nextPageToken')
-            
-#             if not next_page_token:
-#                 break
-#     except HttpError as e:
-#         logger.error(f"An error occurred while fetching videos for channel {channel_id}: {str(e)}")
-#         st.error(f"An error occurred while fetching videos. Please try again later.")
-#         return []
-    
-#     return videos
-
-
 @st.cache_data(ttl=3600)
 def get_channel_videos(channel_id):
     videos = []
+    next_page_token = None
+    
     try:
         while len(videos) < 5:  # Limit to 5 videos per channel
             request = youtube.search().list(
@@ -144,42 +116,70 @@ def get_channel_videos(channel_id):
                 channelId=channel_id,
                 maxResults=5,
                 order="viewCount",
-                type="video"
+                type="video",
+                pageToken=next_page_token
             )
             response = request.execute()
+            
             videos.extend(response['items'])
-        
+            next_page_token = response.get('nextPageToken')
+            
+            if not next_page_token:
+                break
     except HttpError as e:
-        logger.error(f"Error fetching videos: {str(e)}")
-        st.error("Error accessing YouTube API. Please check your API key.")
+        logger.error(f"An error occurred while fetching videos for channel {channel_id}: {str(e)}")
+        st.error(f"An error occurred while fetching videos. Please try again later.")
         return []
     
     return videos
 
 
-
 # @st.cache_data(ttl=3600)
-# def search_videos(query, channel_id):  # Added selected_channel_id parameter
-#     if not youtube:
-#         logger.error("YouTube API client is not initialized")
-#         st.error("YouTube search is currently unavailable. Please try again later.")
+# def get_channel_videos(channel_id):
+#     videos = []
+#     try:
+#         while len(videos) < 5:  # Limit to 5 videos per channel
+#             request = youtube.search().list(
+#                 part="id,snippet",
+#                 channelId=channel_id,
+#                 maxResults=5,
+#                 order="viewCount",
+#                 type="video"
+#             )
+#             response = request.execute()
+#             videos.extend(response['items'])
+        
+#     except HttpError as e:
+#         logger.error(f"Error fetching videos: {str(e)}")
+#         st.error("Error accessing YouTube API. Please check your API key.")
 #         return []
+    
+#     return videos
 
-#     all_videos = get_channel_videos(channel_id)  # Only search in selected channel
-    
-#     # Sort all videos by view count
-#     all_videos.sort(key=lambda x: int(get_video_details(x['id']['videoId'])['viewCount']), reverse=True)
-    
-#     return all_videos[:5]
+
 
 @st.cache_data(ttl=3600)
-def search_videos(query, channel_id):
-    videos = get_channel_videos(channel_id)
-    if videos:
-        for video in videos:
-            video['statistics'] = get_video_details(video['id']['videoId'])
-        videos.sort(key=lambda x: int(x['statistics'].get('viewCount', '0')), reverse=True)
-    return videos[:5]
+def search_videos(query, channel_id):  # Added selected_channel_id parameter
+    if not youtube:
+        logger.error("YouTube API client is not initialized")
+        st.error("YouTube search is currently unavailable. Please try again later.")
+        return []
+
+    all_videos = get_channel_videos(channel_id)  # Only search in selected channel
+    
+    # Sort all videos by view count
+    all_videos.sort(key=lambda x: int(get_video_details(x['id']['videoId'])['viewCount']), reverse=True)
+    
+    return all_videos[:5]
+
+# @st.cache_data(ttl=3600)
+# def search_videos(query, channel_id):
+#     videos = get_channel_videos(channel_id)
+#     if videos:
+#         for video in videos:
+#             video['statistics'] = get_video_details(video['id']['videoId'])
+#         videos.sort(key=lambda x: int(x['statistics'].get('viewCount', '0')), reverse=True)
+#     return videos[:5]
 
 # @st.cache_data(ttl=3600)
 # def search_videos(query, channel_id):
@@ -267,11 +267,24 @@ with tab2:
         if user_api_key:
             youtube = build('youtube', 'v3', developerKey=user_api_key)
         else:
-            youtube = build('youtube', 'v3', developerKey=st.secrets["youtube_api"]["key"])
+            youtube = build('youtube', 'v3', developerKey=st.secrets["youtube_api"])
         logger.info("YouTube API client initialized successfully")
     except Exception as e:
         logger.error(f"Error initializing YouTube API client: {str(e)}")
         youtube = None
+    
+
+    # try:
+    #     API_KEY = user_api_key if user_api_key else st.secrets['youtube_api']
+    #     youtube = build('youtube', 'v3', developerKey=API_KEY)
+    #     logger.info("YouTube API client initialized successfully")
+    # except Exception as e:
+    #     logger.error(f"Error initializing YouTube API client: {str(e)}")
+    #     #st.error("Please enter a valid YouTube API key")  
+    #     youtube = None
+
+
+
 
     # Search methods
     search_method = st.radio(
