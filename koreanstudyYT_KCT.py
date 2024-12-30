@@ -205,7 +205,7 @@ with tab1:
   
 with tab2:
         
-
+    st.markdown("<h1 class='title'>YouTube Caption Search</h1>", unsafe_allow_html=True)
 
         # API Key input section
         with st.expander("Use your YouTube API Key"):   
@@ -242,9 +242,9 @@ with tab2:
 
         search_term = st.text_input("Enter a Korean grammar point or phrase:")
 
-        if search_method == "Search by Channel":
+        if search_method == "Caption Search by Channel":
             channel_options = {
-                "SBS Running Man": "UCaKod3X1Tn4c7Ci0iUKcvzQ",
+                #"SBS Running Man": "UCaKod3X1Tn4c7Ci0iUKcvzQ",
                 "youquizontheblock": "UC920m3pMPH45qztdhppZhwA",
             }
             selected_channel = st.selectbox("Select Channel", options=list(channel_options.keys()))
