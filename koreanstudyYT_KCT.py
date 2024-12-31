@@ -297,6 +297,9 @@ with tab2:
     if search_method == "Search by Channel":
         channel_options = {
             "youquizontheblock": "UC920m3pMPH45qztdhppZhwA",
+            "SBS Running Man": "UCaKod3X1Tn4c7Ci0iUKcvzQ",
+            "DdeunDdeun": "UCDNvRZRgvkBTUkQzFoT_8rA",  
+    
         }
         selected_channel = st.selectbox("Select Channel", options=list(channel_options.keys()))
 
