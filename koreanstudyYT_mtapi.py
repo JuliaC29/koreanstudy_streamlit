@@ -126,7 +126,7 @@ def search_videos(query, channel_id):  # Added selected_channel_id parameter
     # Sort all videos by view count
     all_videos.sort(key=lambda x: int(get_video_details(x['id']['videoId'])['viewCount']), reverse=True)
     
-    return all_videos[:5]
+    return all_videos[:1]
 
 
 @st.cache_data(ttl=86400)
