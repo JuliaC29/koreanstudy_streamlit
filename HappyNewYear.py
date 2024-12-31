@@ -26,46 +26,46 @@ videos = [
 
 
     
-for video in videos:
+# for video in videos:
 
-    # st.markdown(f'''
-    #     <iframe 
-    #         width="700" 
-    #         height="400" 
-    #         src="https://www.youtube.com/embed/{video['link']}&start={video['start']}&end={video['end']}&autoplay=0" 
-    #         frameborder="0" 
-    #         allowfullscreen
-    #     >
-    #     </iframe>
-    # ''', unsafe_allow_html=True)
+#     st.markdown(f'''
+#         <iframe 
+#             width="700" 
+#             height="400" 
+#             src="https://www.youtube.com/embed/{video['link']}&start={video['start']}&end={video['end']}&autoplay=0" 
+#             frameborder="0" 
+#             allowfullscreen
+#         >
+#         </iframe>
+#     ''', unsafe_allow_html=True)
 
     
 
-    st.markdown("""
-    <style>
-    .video-container {
-        position: relative;
-        width: 100%;
-        padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
-    }
-    .video-container iframe {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-    }
-    </style>
-    <div class="video-container">
-        <iframe 
-            src="https://www.youtube.com/embed/{video['link']}?start={video['start']}&end={video['end']}&autoplay=0" 
-            frameborder="0" 
-            allowfullscreen>
-        </iframe>
-    </div>
-    """, 
-    unsafe_allow_html=True)
-
+for video in videos:
+    st.markdown(f"""
+        <style>
+        .video-container {{
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%;
+            margin-bottom: 20px;
+        }}
+        .video-container iframe {{
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }}
+        </style>
+        <div class="video-container">
+            <iframe 
+                src="https://www.youtube.com/embed/{video['link']}?start={video['start']}&end={video['end']}&autoplay=0" 
+                frameborder="0" 
+                allowfullscreen>
+            </iframe>
+        </div>
+    """, unsafe_allow_html=True)
 
 
 
