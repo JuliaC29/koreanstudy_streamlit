@@ -7,7 +7,7 @@ st.markdown("""
     </style>
     
     <h1 style='text-align: center; font-size: 34px; margin-bottom: 0.01px; font-family: "Nanum Gothic", sans-serif; color: #0066ff;'>
-    <span style='font-size: 20px;'>🐍</span> 새해 복 많이 받으세요! <span style='font-size: 20px;'>🐍</span>
+    새해 복 많이 받으세요!<span style='font-size: 20px;'>🐍</span>
     </h1>
        
     <div style='text-align: center; font-size: 22px; margin-bottom: 20px; font-family: "Nanum Gothic", sans-serif; '>
