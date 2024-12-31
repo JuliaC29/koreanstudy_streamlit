@@ -10,11 +10,11 @@ st.markdown("""
     새해 복 많이 받으세요!<span style='font-size: 20px;'>🐍</span>
     </h1>
        
-    <div style='text-align: center; font-size: 22px; margin-bottom: 20px; font-family: "Nanum Gothic", sans-serif; '>
+    <div style='text-align: center; font-size: 22px; margin-bottom: 50px; font-family: "Nanum Gothic", sans-serif; '>
     2025년 새해에도 늘 건강하시고 뜻하시는 모든 일 이루시길 바랍니다.
     </div>
             
-    <div style='text-align: center; font-size: 20px; margin-bottom: 20px; font-family: "Nanum Gothic", sans-serif; '>
+    <div style='text-align: center; font-size: 16px; margin-bottom: 20px; font-family: "Nanum Gothic", sans-serif; '>
     ⬇️ 새해 축하 영상 보기 ⬇️
     </div>
     """, 
