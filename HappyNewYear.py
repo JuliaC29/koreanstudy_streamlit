@@ -60,7 +60,7 @@ for video in videos:
         </style>
         <div class="video-container">
             <iframe 
-                src="https://www.youtube.com/embed/{video['link']}?start={video['start']}&end={video['end']}&autoplay=0" 
+                src="https://www.youtube.com/embed/{video['link']}&start={video['start']}&end={video['end']}&autoplay=0" 
                 frameborder="0" 
                 allowfullscreen>
             </iframe>
