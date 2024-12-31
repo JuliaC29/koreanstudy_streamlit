@@ -308,8 +308,10 @@ with tab2:
                 try:
                     channel_id = channel_options[selected_channel]
                     results = search_videos(search_term, channel_id)
-                    
+                    found_videos = 0
                     for item in results:
+                        if found_videos >= 1:
+                            break
                         video_id = item['id']['videoId']
                         title = item['snippet']['title']
                         channel_title = item['snippet']['channelTitle']
@@ -321,7 +323,8 @@ with tab2:
                                 st.write(f"### {title}")
                                 st.write(f"Channel: {channel_title}")
                                 display_video_segments(video_id, matches)
-                
+                    if found_videos == 0:
+                        st.write("No videos with matching captions found. Try a different search term.")
                 except Exception as e:
                     st.error(f"An error occurred: {str(e)}")
             else:
