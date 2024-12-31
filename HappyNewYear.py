@@ -20,25 +20,10 @@ st.markdown("""
 # List of video links with timestamps
 videos = [ 
     {"link": "b3E4UoGNz8c?si=082lR3gMj6SOuq0t", "start": 1229, "end": 1232},
-    {"link": "JdU-QezqYTM?si=UTjaMVF8TSNrs59J", "start": 1591, "end": 1594},  
+    {"link": "l1vnWPpGEVU?si=aAS-iwWRb4E3PT88", "start": 300, "end": 305}, 
+ 
     
 ]
-
-
-    
-# for video in videos:
-
-#     st.markdown(f'''
-#         <iframe 
-#             width="700" 
-#             height="400" 
-#             src="https://www.youtube.com/embed/{video['link']}&start={video['start']}&end={video['end']}&autoplay=0" 
-#             frameborder="0" 
-#             allowfullscreen
-#         >
-#         </iframe>
-#     ''', unsafe_allow_html=True)
-
     
 
 for video in videos:
