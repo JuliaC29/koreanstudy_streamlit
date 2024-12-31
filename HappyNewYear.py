@@ -6,11 +6,16 @@ st.markdown("""
     @import url('https://fonts.googleapis.com/css2?family=Nanum+Gothic&display=swap');
     </style>
     
-    <h1 style='text-align: center; font-size: 34px; margin-bottom: 20px; font-family: "Nanum Gothic", sans-serif; color: #0066ff;'>
-        새해 복 많이 받으세요!🐍
+    <h1 style='text-align: center; font-size: 34px; margin-bottom: 0.01px; font-family: "Nanum Gothic", sans-serif; color: #0066ff;'>
+    <span style='font-size: 20px;'>🐍</span> 새해 복 많이 받으세요! <span style='font-size: 20px;'>🐍</span>
     </h1>
+       
     <div style='text-align: center; font-size: 22px; margin-bottom: 20px; font-family: "Nanum Gothic", sans-serif; '>
-        2025년 새해에도 늘 건강하시고 뜻하시는 모든 일 이루시길 바랍니다.
+    2025년 새해에도 늘 건강하시고 뜻하시는 모든 일 이루시길 바랍니다.
+    </div>
+            
+    <div style='text-align: center; font-size: 20px; margin-bottom: 20px; font-family: "Nanum Gothic", sans-serif; '>
+    ⬇️ 새해 축하 영상 보기 ⬇️
     </div>
     """, 
     unsafe_allow_html=True
