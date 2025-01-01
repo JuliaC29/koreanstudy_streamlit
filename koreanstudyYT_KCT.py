@@ -52,7 +52,50 @@ def get_lesson_link(lesson):
         logger.error(f"Error in get_lesson_link: {e}")
         return None, None
 
+# Load CSV data for YouTube
+@st.cache_data
+def load_grammar_csv_data():
+    try:
+        df = pd.read_csv('data/fcstr2.csv')  # Your YouTube CSV file
+        lesson_list = df['lesson'].unique().tolist()
 
+        return df, lesson_list
+    except Exception as e:
+        st.error(f"Error loading grammar CSV file: {e}")
+        return None, []
+
+df_grammar, lesson_list_grammar = load_grammar_csv_data()
+
+
+# YouTube
+def get_grammar_videos(lesson):
+    try:
+        videos_data = df_grammar[df_grammar['lesson'] == lesson]
+        grammar_points = []
+        videos_list = []
+        
+        
+        for index, row in videos_data.iterrows():
+            grammar_points.append(row['grammar_point'])
+            #videos_list.append((row['youtube_link'], row['timestamp']))
+            videos_list.append((row['youtube_link'], row['timestamp'], row['end']))
+           
+
+        return list(set(grammar_points)), videos_list
+    except Exception as e:
+        logger.error(f"Error getting videos: {e}")
+        return [], []
+
+
+def extract_video_id(url):
+    try:
+        if 'v=' in url:
+            return url.split('v=')[1].split('&')[0]
+        elif 'youtu.be/' in url:
+            return url.split('youtu.be/')[1]
+        return url
+    except:
+        return url
 
 # # Load API key from Streamlit secrets and initialize YouTube API client
 # try:
@@ -114,7 +157,7 @@ def get_channel_videos(channel_id):
             request = youtube.search().list(
                 part="id,snippet",
                 channelId=channel_id,
-                maxResults=5,
+                maxResults=10,
                 order="viewCount",
                 type="video",
                 pageToken=next_page_token
@@ -233,7 +276,7 @@ def display_video_segments(video_id, matches):
 
 # Streamlit app setup with tabs for different sections
 st.markdown("<h1 class='title'>한국어 단어와 문법</h1>", unsafe_allow_html=True)
-tab1, tab2, tab3, tab4, tab5, tab6= st.tabs(["Vocabulary", "Grammar", "Korean Conversation Table", "Books", "Reading Practice", "Poster"])
+tab1, tab2, tab3, tab4, tab5, tab6, tab7= st.tabs(["Quizlet", "Grammar", "YouTube", "Korean Conversation Table", "Books", "Reading Practice", "Poster"])
 
 
 with tab1:
@@ -242,8 +285,63 @@ with tab1:
         link, lesson_code = get_lesson_link(lesson)
         if link and lesson_code:
             st.markdown("Click: " f"[{lesson_code}]({link})", unsafe_allow_html=True)
-  
+
+
 with tab2:
+    lesson = st.selectbox("Select lesson", lesson_list_grammar)
+
+    if lesson:
+        lesson_data = df_grammar[df_grammar['lesson'] == lesson]
+        grammar_points = lesson_data['grammar_point'].unique().tolist()
+        
+        if grammar_points:
+            selected_grammar = st.selectbox("Select grammar point", grammar_points)
+            if selected_grammar:
+                videos = lesson_data[lesson_data['grammar_point'] == selected_grammar]
+
+                # Add coming soon check here
+                if pd.isna(videos['youtube_link'].iloc[0]) or videos['youtube_link'].iloc[0] == "COMING_SOON":
+                    st.info("Video examples for this grammar point will be added soon!")
+                else:
+
+
+                    for _, video in videos.iterrows():
+                        video_id = extract_video_id(video['youtube_link'])
+                        #video_url = f"https://www.youtube.com/embed/{video_id}&start={int(video['timestamp'])}"
+                        video_url = f"https://www.youtube.com/embed/{video_id}&start={int(video['timestamp'])}&end={int(video['end'])}"
+                        video_html = f"""
+                        <style>
+                        .video-container {{
+                            position: relative;
+                            width: 100%;
+                            padding-bottom: 56.25%;
+                            margin-bottom: 20px;
+                        }}
+                        .video-container iframe {{
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            width: 100%;
+                            height: 100%;
+                        }}
+                        </style>
+                        <div class="video-container">
+                            <iframe 
+                                src="{video_url}" 
+                                frameborder="0" 
+                                allowfullscreen>
+                            </iframe>
+                        </div>
+                        """          
+                        
+                        st.markdown(video_html, unsafe_allow_html=True)
+                        st.write(f"{video['time_format']}")
+                        st.write(f"**Korean:** {video['korean_text']}")
+                        st.write(f"**English:** {video['english_text']}")
+
+
+  
+with tab3:
     # API Key section
     with st.expander("Use your YouTube API Key"):   
         user_api_key = st.text_input(
@@ -348,7 +446,7 @@ with tab2:
                 st.write("Please enter both a YouTube link and a search term.")
 
 # Tab 3: Korean Conversation Table
-with tab3:
+with tab4:
     # Custom CSS for styling
     st.markdown(
     """
@@ -440,7 +538,7 @@ with tab3:
 
 
 
-with tab4:
+with tab5:
 
     # Define the correct Google Sheets scopes
 
@@ -523,7 +621,7 @@ with tab4:
     st.dataframe(reservation_data)
 
 
-with tab5:
+with tab6:
     # Define the correct Google Sheets scopes
 
     SCOPE = ["https://spreadsheets.google.com/feeds", 'https://www.googleapis.com/auth/spreadsheets',
@@ -674,7 +772,7 @@ with tab5:
     else:
         st.write("No availability submitted yet.")
 
-with tab6:
+with tab7:
 
     # Custom CSS for centering and adjusting the font size
     st.markdown(
