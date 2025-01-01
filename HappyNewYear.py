@@ -26,7 +26,7 @@ st.markdown("""
 videos = [ 
     {"link": "JdU-QezqYTM?si=9kag9GDJBWl4gjTu", "start": 3337, "end": 3350},
     {"link": "b3E4UoGNz8c?si=082lR3gMj6SOuq0t", "start": 1229, "end": 1232},
-    {"link": "l1vnWPpGEVU?si=aAS-iwWRb4E3PT88", "start": 300, "end": 305}, 
+    {"link": "EnnrVnbVK2A?si=BqFHNa7mG-WVsjoA", "start": 43, "end": 62}, 
  
     
 ]
