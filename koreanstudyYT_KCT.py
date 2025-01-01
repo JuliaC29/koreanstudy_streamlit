@@ -256,9 +256,33 @@ def format_time(seconds):
 def embed_youtube_video(video_id, start_time_seconds):
     youtube_url = f"https://www.youtube.com/embed/{video_id}?start={start_time_seconds}"
     video_html = f"""
-        <iframe width="700" height="400" src="{youtube_url}" frameborder="0" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-    """
+    
+    <style>
+    .video-container {{
+        position: relative;
+        width: 100%;
+        padding-bottom: 56.25%;
+        margin-bottom: 20px;
+    }}
+    .video-container iframe {{
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }}
+    </style>
+    <div class="video-container">
+        <iframe 
+            src="{video_url}" 
+            frameborder="0" 
+            allowfullscreen>
+        </iframe>
+    </div>
+    """          
+    
     st.markdown(video_html, unsafe_allow_html=True)
+
 
 # Function to display video segments with multiple timestamps using HTML iframe
 def display_video_segments(video_id, matches):
