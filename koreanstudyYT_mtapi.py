@@ -172,7 +172,7 @@ def embed_youtube_video(video_id, start_time_seconds):
     </style>
     <div class="video-container">
         <iframe 
-            src="{video_url}" 
+            src="{youtube_url}" 
             frameborder="0" 
             allowfullscreen>
         </iframe>
