@@ -33,6 +33,13 @@ videos = [
     
 
 for video in videos:
+    video_id = video['link']
+    # Add replay button
+    if st.button("🔄 Replay", key=f"replay_{video_id}"):
+        video_url = f"https://www.youtube.com/embed/{video_id}&start={video['start']}&end={video['end']}&autoplay=1"
+    else:
+        video_url = f"https://www.youtube.com/embed/{video_id}&start={video['start']}&end={video['end']}&autoplay=0"
+
     st.markdown(f"""
         <style>
         .video-container {{
@@ -51,7 +58,7 @@ for video in videos:
         </style>
         <div class="video-container">
             <iframe 
-                src="https://www.youtube.com/embed/{video['link']}&start={video['start']}&end={video['end']}&autoplay=0" 
+                src="{video_url}" 
                 frameborder="0" 
                 allowfullscreen>
             </iframe>
