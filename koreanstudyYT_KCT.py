@@ -311,6 +311,7 @@ with tab1:
             st.markdown("Click: " f"[{lesson_code}]({link})", unsafe_allow_html=True)
 
 
+
 with tab2:
     lesson = st.selectbox("Select lesson", lesson_list_grammar)
 
@@ -322,17 +323,18 @@ with tab2:
             selected_grammar = st.selectbox("Select grammar point", grammar_points)
             if selected_grammar:
                 videos = lesson_data[lesson_data['grammar_point'] == selected_grammar]
-
-                # Add coming soon check here
                 if pd.isna(videos['youtube_link'].iloc[0]) or videos['youtube_link'].iloc[0] == "COMING_SOON":
                     st.info("Video examples for this grammar point will be added soon!")
                 else:
-
-
                     for _, video in videos.iterrows():
                         video_id = extract_video_id(video['youtube_link'])
-                        #video_url = f"https://www.youtube.com/embed/{video_id}&start={int(video['timestamp'])}"
-                        video_url = f"https://www.youtube.com/embed/{video_id}&start={int(video['timestamp'])}&end={int(video['end'])}"
+                        video_url = f"https://www.youtube.com/embed/{video_id}&start={int(video['timestamp'])}&end={int(video['end'])}&loop=1"
+                        
+                        # Add replay button
+                        if st.button("Replay", key=f"replay_{video_id}"):
+                            video_url = f"https://www.youtube.com/embed/{video_id}&start={int(video['timestamp'])}&end={int(video['end'])}&autoplay=1"
+                        
+                        # Video container
                         video_html = f"""
                         <style>
                         .video-container {{
@@ -360,8 +362,24 @@ with tab2:
                         
                         st.markdown(video_html, unsafe_allow_html=True)
                         st.write(f"{video['time_format']}")
-                        st.write(f"**Korean:** {video['korean_text']}")
-                        st.write(f"**English:** {video['english_text']}")
+
+                        # Add buttons to show/hide Korean and English text
+                        # col1, col2 = st.columns(2)
+                        # with col1:
+                        #     if st.button("Show Korean", key=f"kor_{video_id}"):
+                        #         st.write(f"**Korean:** {video['korean_text']}")
+                        # with col2:
+                        #     if st.button("Show English", key=f"eng_{video_id}"):
+                        #         st.write(f"**English:** {video['english_text']}")
+                        
+                        # Add buttons in rows instead of columns
+                        if st.button("Show Korean", key=f"kor_{video_id}"):
+                           st.write(f"**Korean:** {video['korean_text']}")
+                        if st.button("Show English", key=f"eng_{video_id}"):
+                           st.write(f"**English:** {video['english_text']}")
+
+
+
 
 
   
