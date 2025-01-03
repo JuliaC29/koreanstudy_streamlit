@@ -383,35 +383,35 @@ with tab2:
 
 
   
-with tab3:
-    # API Key section
-    with st.expander("Use your YouTube API Key"):   
-        user_api_key = st.text_input(
-            "Enter your YouTube API Key",
-            type="password",
-            help="Get your API key from Google Cloud Console"
-        )
+# with tab3:
+#     # API Key section
+#     with st.expander("Use your YouTube API Key"):   
+#         user_api_key = st.text_input(
+#             "Enter your YouTube API Key",
+#             type="password",
+#             help="Get your API key from Google Cloud Console"
+#         )
         
-        if st.button("How to get an API Key"):
-            st.markdown("""
-            1. Go to [Google Cloud Console](https://console.cloud.google.com/)
-            2. Create a new project or select an existing one
-            3. Enable the YouTube Data API v3
-            4. Go to Credentials
-            5. Click Create Credentials > API Key
-            6. Copy the API key and paste it above
-            """)
+#         if st.button("How to get an API Key"):
+#             st.markdown("""
+#             1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+#             2. Create a new project or select an existing one
+#             3. Enable the YouTube Data API v3
+#             4. Go to Credentials
+#             5. Click Create Credentials > API Key
+#             6. Copy the API key and paste it above
+#             """)
 
-    # Initialize YouTube client
-    try:
-        if user_api_key:
-            youtube = build('youtube', 'v3', developerKey=user_api_key)
-        else:
-            youtube = build('youtube', 'v3', developerKey=st.secrets["youtube_api"])
-        logger.info("YouTube API client initialized successfully")
-    except Exception as e:
-        logger.error(f"Error initializing YouTube API client: {str(e)}")
-        youtube = None
+#     # Initialize YouTube client
+#     try:
+#         if user_api_key:
+#             youtube = build('youtube', 'v3', developerKey=user_api_key)
+#         else:
+#             youtube = build('youtube', 'v3', developerKey=st.secrets["youtube_api"])
+#         logger.info("YouTube API client initialized successfully")
+#     except Exception as e:
+#         logger.error(f"Error initializing YouTube API client: {str(e)}")
+#         youtube = None
     
 
 
@@ -454,7 +454,7 @@ with tab3:
         if not user_api_key:
             st.warning("Please enter your API key to continue.")
             st.stop()
-            
+
         if st.button("How to get an API Key"):
                     st.markdown("""
                     1. Go to [Google Cloud Console](https://console.cloud.google.com/)
