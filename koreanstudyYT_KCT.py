@@ -451,6 +451,16 @@ with tab3:
     else:
         user_api_key = st.text_input("Enter Your YouTube API Key", type="password", 
                                     help="Get API key from Google Cloud Console")
+        if st.button("How to get an API Key"):
+            st.markdown("""
+            1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+            2. Create a new project or select an existing one
+            3. Enable the YouTube Data API v3
+            4. Go to Credentials
+            5. Click Create Credentials > API Key
+            6. Copy the API key and paste it above
+            """)
+            
         if user_api_key:
             try:
                 # Test API key validity
@@ -463,15 +473,7 @@ with tab3:
             st.warning("Please enter an API key.")
             st.stop()
 
-        if st.button("How to get an API Key"):
-                    st.markdown("""
-                    1. Go to [Google Cloud Console](https://console.cloud.google.com/)
-                    2. Create a new project or select an existing one
-                    3. Enable the YouTube Data API v3
-                    4. Go to Credentials
-                    5. Click Create Credentials > API Key
-                    6. Copy the API key and paste it above
-                    """)
+
         if not user_api_key:
             st.warning("Please enter your API key to continue.")
             st.stop()
