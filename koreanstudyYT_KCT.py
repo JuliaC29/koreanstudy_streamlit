@@ -444,9 +444,9 @@ with tab3:
         access_code = st.text_input("Enter access code", type="password", help="Contact instructor for code")
         if access_code:
             try:
-                user_api_key = st.secrets["api_codes"][access_code]
+                user_api_key = st.secrets.api_codes[access_code]
             except:
-                st.error("Invalid code. Please try again or use you API key.")
+                st.error("Invalid access code.")
                 st.stop()
     else:
         user_api_key = st.text_input("Enter Your YouTube API Key", type="password", 
