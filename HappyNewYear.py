@@ -22,12 +22,39 @@ st.markdown("""
 )
 
 
+# Function to format time
+def format_time(seconds):
+    minutes, seconds = divmod(int(seconds), 60)
+    hours, minutes = divmod(minutes, 60)
+    return f"[{hours:02d}:{minutes:02d}:{seconds:02d}]"
+
+
+
+
+
 # List of video links with timestamps
 videos = [ 
-    {"link": "JdU-QezqYTM?si=9kag9GDJBWl4gjTu", "start": 3337, "end": 3350},
-    {"link": "b3E4UoGNz8c?si=082lR3gMj6SOuq0t", "start": 1229, "end": 1232},
-    {"link": "EnnrVnbVK2A?si=BqFHNa7mG-WVsjoA", "start": 43, "end": 62}, 
- 
+    {"link": "JdU-QezqYTM?si=9kag9GDJBWl4gjTu", 
+     "start": 3337, 
+     "end": 3350,
+     'korean_text': '새해 복 많이 받으세요. 이런 걸 정했었어야 되는데. 큰절 한 번 드려야지. 말이라도 하고',
+     'english_text': 'Happy New Year. We should have decided on this kind of thing. We should bow deeply at least once. You could at least say something'
+    },
+    {"link": "b3E4UoGNz8c?si=082lR3gMj6SOuq0t", 
+     "start": 1229, 
+     "end": 1232,
+     'korean_text': '새해 복 많이 받으세요. 감사합니다.',
+     'english_text': 'Happy New Year. Thank you.'
+     },
+    {"link": "EnnrVnbVK2A?si=BqFHNa7mG-WVsjoA", 
+     "start": 43, 
+     "end": 62,
+     'korean_text': '올해는 푸른 뱀의 해인데요, 을사년에는 소망하시는 바를 전부 이루시는 한 해가 되길 바라겠습니다. 올해는 더 큰 꿈을 가지고 행복을 찾으면서 여러분들 하시는 일 다 잘 되시길 진심으로 바라겠습니다. 새해 복 많이 받으세요.',
+     'english_text': 'This year is the year of the green snake, and in the year of Eulsa, I hope you will achieve all that you wish for. I sincerely hope that this year, you will have bigger dreams, find happiness, and succeed in everything you do. Happy New Year.'
+     }, 
+    #{"link": "l1vnWPpGEVU?si=aAS-iwWRb4E3PT88", "start": 300, "end": 305}, 
+    #{"link": "JdU-QezqYTM?si=UTjaMVF8TSNrs59J", "start": 1591, "end": 1594}, 
+     
     
 ]
     
@@ -39,6 +66,7 @@ for video in videos:
         video_url = f"https://www.youtube.com/embed/{video_id}&start={video['start']}&end={video['end']}&autoplay=1"
     else:
         video_url = f"https://www.youtube.com/embed/{video_id}&start={video['start']}&end={video['end']}&autoplay=0"
+
 
     st.markdown(f"""
         <style>
@@ -64,6 +92,15 @@ for video in videos:
             </iframe>
         </div>
     """, unsafe_allow_html=True)
+
+    formatted_time = format_time(video['start'])
+    st.write(formatted_time)
+
+    # Show/Hide text buttons
+    if st.button("Show Korean", key=f"kor_{video['link']}"):
+        st.write(f"**Korean:** {video['korean_text']}")
+    if st.button("Show English", key=f"eng_{video['link']}"):
+        st.write(f"**English:** {video['english_text']}")
 
 
 
