@@ -451,9 +451,6 @@ with tab3:
     else:
         user_api_key = st.text_input("Enter Your YouTube API Key", type="password", 
                                     help="Get API key from Google Cloud Console")
-        if not user_api_key:
-            st.warning("Please enter your API key to continue.")
-            st.stop()
 
         if st.button("How to get an API Key"):
                     st.markdown("""
@@ -464,6 +461,10 @@ with tab3:
                     5. Click Create Credentials > API Key
                     6. Copy the API key and paste it above
                     """)
+        if not user_api_key:
+            st.warning("Please enter your API key to continue.")
+            st.stop()
+
     # try:
     try:
         youtube = build('youtube', 'v3', developerKey=user_api_key)
