@@ -414,6 +414,63 @@ with tab3:
         youtube = None
     
 
+
+
+# with tab3:
+#     with st.expander("Enter Access Code"):   
+#         access_code = st.text_input(
+#             "Enter your access code",
+#             type="password",
+#             help="Contact your instructor for the access code"
+#         )
+        
+#         # Check if valid code exists in secrets
+#         if access_code:
+#             try:
+#                 user_api_key = st.secrets["api_codes"][access_code]
+#             except:
+#                 st.error("Invalid access code. Please contact your instructor.")
+#                 st.stop()
+#         else:
+#             st.warning("Please enter an access code to use this feature.")
+#             st.stop()
+
+
+
+with tab3:
+    access_type = st.radio("Choose access method:", ["Enter Access Code", "Use your API Key"])
+    
+    if access_type == "Enter Access Code":
+        access_code = st.text_input("Enter access code", type="password", help="Contact instructor for code")
+        if access_code:
+            try:
+                user_api_key = st.secrets["api_codes"][access_code]
+            except:
+                st.error("Invalid code. Please try again or use you API key.")
+                st.stop()
+    else:
+        user_api_key = st.text_input("Enter Your YouTube API Key", type="password", 
+                                    help="Get API key from Google Cloud Console")
+        if not user_api_key:
+            st.warning("Please enter your API key to continue.")
+            st.stop()
+
+    try:
+        youtube = build('youtube', 'v3', developerKey=user_api_key)
+        logger.info("YouTube API initialized successfully")
+    except Exception as e:
+        st.error("Invalid API key. Please check and try again.")
+        st.stop()
+
+        if st.button("How to get an API Key"):
+                    st.markdown("""
+                    1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+                    2. Create a new project or select an existing one
+                    3. Enable the YouTube Data API v3
+                    4. Go to Credentials
+                    5. Click Create Credentials > API Key
+                    6. Copy the API key and paste it above
+                    """)
     # try:
     #     API_KEY = user_api_key if user_api_key else st.secrets['youtube_api']
     #     youtube = build('youtube', 'v3', developerKey=API_KEY)
