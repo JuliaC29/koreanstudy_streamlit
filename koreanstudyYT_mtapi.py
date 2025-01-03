@@ -252,7 +252,7 @@ with tab2:
         youtube = build('youtube', 'v3', developerKey=user_api_key)
         logger.info("YouTube API initialized successfully")
     except Exception as e:
-        st.error("Invalid API key. Please check and try again.")
+        #st.error("Invalid API key. Please check and try again.")
         st.stop()
 
 
