@@ -59,14 +59,67 @@ videos = [
 ]
     
 
+# for video in videos:
+#     video_id = video['link']
+#     # Add replay button
+#     if st.button("🔄 Replay", key=f"replay_{video_id}"):
+#         video_url = f"https://www.youtube.com/embed/{video_id}&start={video['start']}&end={video['end']}&autoplay=1"
+#     else:
+#         video_url = f"https://www.youtube.com/embed/{video_id}&start={video['start']}&end={video['end']}&autoplay=0"
+
+
+#     st.markdown(f"""
+#         <style>
+#         .video-container {{
+#             position: relative;
+#             width: 100%;
+#             padding-bottom: 56.25%;
+#             margin-bottom: 20px;
+#         }}
+#         .video-container iframe {{
+#             position: absolute;
+#             top: 0;
+#             left: 0;
+#             width: 100%;
+#             height: 100%;
+#         }}
+#         </style>
+#         <div class="video-container">
+#             <iframe 
+#                 src="{video_url}" 
+#                 frameborder="0" 
+#                 allowfullscreen>
+#             </iframe>
+#         </div>
+#     """, unsafe_allow_html=True)
+
+#     formatted_time = format_time(video['start'])
+#     st.write(formatted_time)
+
+#     # Show/Hide text buttons
+#     if st.button("Show Korean", key=f"kor_{video['link']}"):
+#         st.write(f"**Korean:** {video['korean_text']}")
+#     if st.button("Show English", key=f"eng_{video['link']}"):
+#         st.write(f"**English:** {video['english_text']}")
+
+
+
 for video in videos:
     video_id = video['link']
-    # Add replay button
-    if st.button("🔄 Replay", key=f"replay_{video_id}"):
+    
+    # Create two columns for timestamp and replay button
+    col1, col2 = st.columns([0.2, 1.6])  # Adjust ratio as needed
+    with col1:
+        formatted_time = format_time(video['start'])
+        st.write(formatted_time)
+    with col2:
+        replay = st.button("🔄 Replay", key=f"replay_{video_id}")
+    
+    # Set video URL based on replay button
+    if replay:
         video_url = f"https://www.youtube.com/embed/{video_id}&start={video['start']}&end={video['end']}&autoplay=1"
     else:
         video_url = f"https://www.youtube.com/embed/{video_id}&start={video['start']}&end={video['end']}&autoplay=0"
-
 
     st.markdown(f"""
         <style>
@@ -93,18 +146,11 @@ for video in videos:
         </div>
     """, unsafe_allow_html=True)
 
-    formatted_time = format_time(video['start'])
-    st.write(formatted_time)
-
-    # Show/Hide text buttons
+   # Show/Hide text buttons
     if st.button("Show Korean", key=f"kor_{video['link']}"):
         st.write(f"**Korean:** {video['korean_text']}")
     if st.button("Show English", key=f"eng_{video['link']}"):
         st.write(f"**English:** {video['english_text']}")
-
-
-
-
 
 
 
