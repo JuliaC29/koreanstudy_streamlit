@@ -451,6 +451,17 @@ with tab3:
     else:
         user_api_key = st.text_input("Enter Your YouTube API Key", type="password", 
                                     help="Get API key from Google Cloud Console")
+        if user_api_key:
+            try:
+                # Test API key validity
+                youtube = build('youtube', 'v3', developerKey=user_api_key)
+                test = youtube.videos().list(part="snippet", id="dQw4w9WgXcQ").execute()
+            except:
+                st.error("Invalid API key.")
+                st.stop()
+        else:
+            st.warning("Please enter an API key.")
+            st.stop()
 
         if st.button("How to get an API Key"):
                     st.markdown("""
@@ -464,6 +475,11 @@ with tab3:
         if not user_api_key:
             st.warning("Please enter your API key to continue.")
             st.stop()
+
+
+
+
+
 
     # try:
     try:
