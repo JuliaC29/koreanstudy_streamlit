@@ -639,7 +639,7 @@ with tab3:
             # Enable search functionality
         except:
             st.error("Invalid access code.")
-    elif user_api_key = st.text_input("Enter YouTube API Key", type="password"):
+    elif user_api_key:
         try:
             youtube = build('youtube', 'v3', developerKey=user_api_key)
             test = youtube.videos().list(part="snippet", id="dQw4w9WgXcQ").execute()
