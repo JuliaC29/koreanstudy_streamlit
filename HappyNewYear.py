@@ -111,7 +111,7 @@ for video in videos:
     col1, col2 = st.columns([0.3, 1.7])  # Adjust ratio as needed
     with col2:
         formatted_time = format_time(video['start'])
-        st.write(formatted_time)
+        st.markdown(f'<div class="time-display">{formatted_time}</div>', unsafe_allow_html=True)
     with col1:
         replay = st.button("🔄 Replay", key=f"replay_{video_id}")
     
@@ -127,7 +127,7 @@ for video in videos:
             position: relative;
             width: 100%;
             padding-bottom: 56.25%;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
         }}
         .video-container iframe {{
             position: absolute;
@@ -135,6 +135,12 @@ for video in videos:
             left: 0;
             width: 100%;
             height: 100%;
+        }}
+        .time-display {{
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 10px;
+            padding-top: 5px;
         }}
         </style>
         <div class="video-container">
