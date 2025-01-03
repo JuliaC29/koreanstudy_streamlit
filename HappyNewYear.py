@@ -108,11 +108,11 @@ for video in videos:
     video_id = video['link']
     
     # Create two columns for timestamp and replay button
-    col1, col2 = st.columns([0.3, 1.7])  # Adjust ratio as needed
-    with col2:
+    col1, col2 = st.columns([0.17, 1.8])  # Adjust ratio as needed
+    with col1:
         formatted_time = format_time(video['start'])
         st.markdown(f'<div class="time-display">{formatted_time}</div>', unsafe_allow_html=True)
-    with col1:
+    with col2:
         replay = st.button("🔄", key=f"replay_{video_id}")
     
     # Set video URL based on replay button
