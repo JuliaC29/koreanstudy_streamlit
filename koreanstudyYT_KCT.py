@@ -822,95 +822,206 @@ with tab2:
 #         st.warning("Please enter valid access code or API key to use search features.")
 
 
-with tab3:
-   access_type = st.radio("Choose access method:", ["Enter Access Code", "Use Personal API Key"])
-   valid_access = False
+# with tab3:
+#    access_type = st.radio("Choose access method:", ["Enter Access Code", "Use Personal API Key"])
+#    valid_access = False
    
-   if access_type == "Enter Access Code":
-       access_code = st.text_input("Enter access code", type="password", help="Contact instructor for code")
-       if access_code:
-           try:
-               user_api_key = st.secrets["api_codes"][access_code]
-               youtube = build('youtube', 'v3', developerKey=user_api_key)
-               valid_access = True
-           except:
-               st.error("Invalid access code.")
-   else:
-       user_api_key = st.text_input("Enter YouTube API Key", type="password")
-       if st.button("How to get an API Key"):
-           st.markdown("""
-           1. Go to [Google Cloud Console](https://console.cloud.google.com/)
-           2. Create a new project or select an existing one
-           3. Enable the YouTube Data API v3
-           4. Go to Credentials
-           5. Click Create Credentials > API Key
-           6. Copy the API key and paste it above
-           """)
-       if user_api_key:
-           try:
-               youtube = build('youtube', 'v3', developerKey=user_api_key)
-               test = youtube.videos().list(part="snippet", id="dQw4w9WgXcQ").execute()
-               valid_access = True
-           except:
-               st.error("Invalid API key.")
+#    if access_type == "Enter Access Code":
+#        access_code = st.text_input("Enter access code", type="password", help="Contact instructor for code")
+#        if access_code:
+#            try:
+#                user_api_key = st.secrets["api_codes"][access_code]
+#                youtube = build('youtube', 'v3', developerKey=user_api_key)
+#                valid_access = True
+#            except:
+#                st.error("Invalid access code.")
+#    else:
+#        user_api_key = st.text_input("Enter YouTube API Key", type="password")
+#        if st.button("How to get an API Key"):
+#            st.markdown("""
+#            1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+#            2. Create a new project or select an existing one
+#            3. Enable the YouTube Data API v3
+#            4. Go to Credentials
+#            5. Click Create Credentials > API Key
+#            6. Copy the API key and paste it above
+#            """)
+#        if user_api_key:
+#            try:
+#                youtube = build('youtube', 'v3', developerKey=user_api_key)
+#                test = youtube.videos().list(part="snippet", id="dQw4w9WgXcQ").execute()
+#                valid_access = True
+#            except:
+#                st.error("Invalid API key.")
 
-   if valid_access:
-       search_method = st.radio("Choose search method:", ["Search by Video Link", "Search by Channel"])
-       search_term = st.text_input("Enter a Korean grammar point or phrase:", key="search_term_tab2")
+#    if valid_access:
+#        search_method = st.radio("Choose search method:", ["Search by Video Link", "Search by Channel"])
+#        search_term = st.text_input("Enter a Korean grammar point or phrase:", key="search_term_tab2")
 
-       if search_method == "Search by Channel":
-           channel_options = {
-               "youquizontheblock": "UC920m3pMPH45qztdhppZhwA",
-               "SBS Running Man": "UCaKod3X1Tn4c7Ci0iUKcvzQ",
-               "DdeunDdeun": "UCDNvRZRgvkBTUkQzFoT_8rA",  
-           }
-           selected_channel = st.selectbox("Select Channel", options=list(channel_options.keys()))
+#        if search_method == "Search by Channel":
+#            channel_options = {
+#                "youquizontheblock": "UC920m3pMPH45qztdhppZhwA",
+#                "SBS Running Man": "UCaKod3X1Tn4c7Ci0iUKcvzQ",
+#                "DdeunDdeun": "UCDNvRZRgvkBTUkQzFoT_8rA",  
+#            }
+#            selected_channel = st.selectbox("Select Channel", options=list(channel_options.keys()))
 
-           if st.button("Search in Channel", key="channel_search"):
-               if youtube and search_term:
-                   try:
-                       channel_id = channel_options[selected_channel]
-                       results = search_videos(search_term, channel_id)
+#            if st.button("Search in Channel", key="channel_search"):
+#                if youtube and search_term:
+#                    try:
+#                        channel_id = channel_options[selected_channel]
+#                        results = search_videos(search_term, channel_id)
                        
-                       for item in results:
-                           video_id = item['id']['videoId']
-                           title = item['snippet']['title']
-                           channel_title = item['snippet']['channelTitle']
-                           transcript = get_caption_with_timestamps(video_id)
+#                        for item in results:
+#                            video_id = item['id']['videoId']
+#                            title = item['snippet']['title']
+#                            channel_title = item['snippet']['channelTitle']
+#                            transcript = get_caption_with_timestamps(video_id)
                            
-                           if transcript:
-                               matches = search_caption_with_context(transcript, search_term)
-                               if matches:
-                                   st.write(f"### {title}")
-                                   st.write(f"Channel: {channel_title}")
-                                   display_video_segments(video_id, matches)
-                   except Exception as e:
-                       st.error(f"An error occurred: {str(e)}")
-               else:
-                   st.error("Please enter a search term")
-       else:
-           youtube_link = st.text_input("Enter YouTube link:", key="video_link_tab2")
+#                            if transcript:
+#                                matches = search_caption_with_context(transcript, search_term)
+#                                if matches:
+#                                    st.write(f"### {title}")
+#                                    st.write(f"Channel: {channel_title}")
+#                                    display_video_segments(video_id, matches)
+#                    except Exception as e:
+#                        st.error(f"An error occurred: {str(e)}")
+#                else:
+#                    st.error("Please enter a search term")
+#        else:
+#            youtube_link = st.text_input("Enter YouTube link:", key="video_link_tab2")
            
-           if st.button("Search in Video", key="video_search"):
-               if youtube and youtube_link and search_term:
-                   try:
-                       video_id = youtube_link.split('v=')[1]
-                       transcript = get_caption_with_timestamps(video_id)
-                       if transcript:
-                           matches = search_caption_with_context(transcript, search_term)
-                           if matches:
-                               st.write(f"### Matches found for '{search_term}' in the video:")
-                               display_video_segments(video_id, matches)
-                           else:
-                               st.write("No matching captions found.")
-                   except Exception as e:
-                       st.error(f"An error occurred: {str(e)}")
-               else:
-                   st.write("Please enter both a YouTube link and a search term.")
-   else:
-       st.warning("Please enter valid access code or API key to use search features.")
+#            if st.button("Search in Video", key="video_search"):
+#                if youtube and youtube_link and search_term:
+#                    try:
+#                        video_id = youtube_link.split('v=')[1]
+#                        transcript = get_caption_with_timestamps(video_id)
+#                        if transcript:
+#                            matches = search_caption_with_context(transcript, search_term)
+#                            if matches:
+#                                st.write(f"### Matches found for '{search_term}' in the video:")
+#                                display_video_segments(video_id, matches)
+#                            else:
+#                                st.write("No matching captions found.")
+#                    except Exception as e:
+#                        st.error(f"An error occurred: {str(e)}")
+#                else:
+#                    st.write("Please enter both a YouTube link and a search term.")
+#    else:
+#        st.warning("Please enter valid access code or API key to use search features.")
+
+with tab3:
+    # API Key section
+    access_type = st.radio("Choose access method:", ["Enter Access Code", "Use your API Key"])
+    
+    if access_type == "Enter Access Code":
+        access_code = st.text_input("Enter access code", type="password", help="Contact instructor for code")
+        if access_code:
+            try:
+                user_api_key = st.secrets.api_codes[access_code]
+            except:
+                st.error("Invalid access code.")
+                st.stop()
+    else:
+        user_api_key = st.text_input("Enter Your YouTube API Key", type="password", 
+                                    help="Get API key from Google Cloud Console")
+        if st.button("How to get an API Key"):
+            st.markdown("""
+            1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+            2. Create a new project or select an existing one
+            3. Enable the YouTube Data API v3
+            4. Go to Credentials
+            5. Click Create Credentials > API Key
+            6. Copy the API key and paste it above
+            """)
+            
+        if user_api_key:
+            try:
+                # Test API key validity
+                youtube = build('youtube', 'v3', developerKey=user_api_key)
+                test = youtube.videos().list(part="snippet", id="dQw4w9WgXcQ").execute()
+            except:
+                st.error("Invalid API key.")
+                st.stop()
+        else:
+            st.warning("Please enter an API key.")
+            st.stop()
 
 
+        if not user_api_key:
+            st.warning("Please enter your API key to continue.")
+            st.stop()
+
+
+    # try:
+    try:
+        youtube = build('youtube', 'v3', developerKey=user_api_key)
+        logger.info("YouTube API initialized successfully")
+    except Exception as e:
+        st.error("Invalid API key. Please check and try again.")
+        st.stop()
+
+
+    # Search methods
+    search_method = st.radio(
+        "Choose search method:",
+        ["Search by Video Link", "Search by Channel"]
+    )
+
+    search_term = st.text_input("Enter a Korean grammar point or phrase:", key="search_term_tab2")
+
+    if search_method == "Search by Channel":
+        channel_options = {
+            "youquizontheblock": "UC920m3pMPH45qztdhppZhwA",
+            "SBS Running Man": "UCaKod3X1Tn4c7Ci0iUKcvzQ",
+            "DdeunDdeun": "UCDNvRZRgvkBTUkQzFoT_8rA",  
+    
+        }
+        selected_channel = st.selectbox("Select Channel", options=list(channel_options.keys()))
+
+        if st.button("Search in Channel", key="channel_search"):
+            if youtube and search_term:
+                try:
+                    channel_id = channel_options[selected_channel]
+                    results = search_videos(search_term, channel_id)
+                    
+                    for item in results:
+                        video_id = item['id']['videoId']
+                        title = item['snippet']['title']
+                        channel_title = item['snippet']['channelTitle']
+                        transcript = get_caption_with_timestamps(video_id)
+                        
+                        if transcript:
+                            matches = search_caption_with_context(transcript, search_term)
+                            if matches:
+                                st.write(f"### {title}")
+                                st.write(f"Channel: {channel_title}")
+                                display_video_segments(video_id, matches)
+                
+                except Exception as e:
+                    st.error(f"An error occurred: {str(e)}")
+            else:
+                st.error("Please enter a search term and ensure API key is valid")
+
+    else:
+        youtube_link = st.text_input("Enter YouTube link:", key="video_link_tab2")
+        
+        if st.button("Search in Video", key="video_search"):
+            if youtube and youtube_link and search_term:
+                try:
+                    video_id = youtube_link.split('v=')[1]
+                    transcript = get_caption_with_timestamps(video_id)
+                    if transcript:
+                        matches = search_caption_with_context(transcript, search_term)
+                        if matches:
+                            st.write(f"### Matches found for '{search_term}' in the video:")
+                            display_video_segments(video_id, matches)
+                        else:
+                            st.write("No matching captions found.")
+                except Exception as e:
+                    st.error(f"An error occurred: {str(e)}")
+            else:
+                st.write("Please enter both a YouTube link and a search term.")
 
 
 # Tab 3: Korean Conversation Table
