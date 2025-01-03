@@ -113,7 +113,7 @@ for video in videos:
         formatted_time = format_time(video['start'])
         st.markdown(f'<div class="time-display">{formatted_time}</div>', unsafe_allow_html=True)
     with col1:
-        replay = st.button("🔄 Replay", key=f"replay_{video_id}")
+        replay = st.button("🔄", key=f"replay_{video_id}")
     
     # Set video URL based on replay button
     if replay:
