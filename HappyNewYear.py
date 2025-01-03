@@ -37,7 +37,7 @@ videos = [
     {"link": "JdU-QezqYTM?si=9kag9GDJBWl4gjTu", 
      "start": 3337, 
      "end": 3350,
-     'korean_text': '새해 복 많이 받으세요. 이런 걸 정했었어야 되는데. 큰절 한 번 드려야지. 말이라도 하고',
+     'korean_text': '새해 복 많이 받으세요. 이런 걸 정했었어야 되는데. 큰 절 한 번 드려야지. 말이라도 하고',
      'english_text': 'Happy New Year. We should have decided on this kind of thing. We should bow deeply at least once. You could at least say something'
     },
     {"link": "b3E4UoGNz8c?si=082lR3gMj6SOuq0t", 
