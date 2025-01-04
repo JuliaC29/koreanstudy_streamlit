@@ -915,7 +915,7 @@ with tab3:
     access_type = st.radio("Choose access method:", ["Enter Access Code", "Use your API Key"])
     
     if access_type == "Enter Access Code":
-        access_code = st.text_input("Enter access code", type="password", help="Contact instructor for code")
+        access_code = st.text_input("Enter access code", type="password"), #help="Contact instructor for code")
         if access_code:
             try:
                 user_api_key = st.secrets.api_codes[access_code]
