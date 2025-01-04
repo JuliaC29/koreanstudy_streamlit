@@ -60,74 +60,23 @@ videos = [
     
 
 
-# for video in videos:
-#     video_id = video['link']
-    
-#     # Create two columns for timestamp and replay button
-#     col1, col2 = st.columns([0.17, 1.8])  # Adjust ratio as needed
-#     with col1:
-#         formatted_time = format_time(video['start'])
-#         st.markdown(f'<div class="time-display">{formatted_time}</div>', unsafe_allow_html=True)
-#     with col2:
-#         replay = st.button("🔄", key=f"replay_{video_id}")
-    
-#     # Set video URL based on replay button
-#     if replay:
-#         video_url = f"https://www.youtube.com/embed/{video_id}&start={video['start']}&end={video['end']}&autoplay=1"
-#     else:
-#         video_url = f"https://www.youtube.com/embed/{video_id}&start={video['start']}&end={video['end']}&autoplay=0"
-
-#     st.markdown(f"""
-#         <style>
-#         .video-container {{
-#             position: relative;
-#             width: 100%;
-#             padding-bottom: 56.25%;
-#             margin-bottom: 10px;
-#         }}
-#         .video-container iframe {{
-#             position: absolute;
-#             top: 0;
-#             left: 0;
-#             width: 100%;
-#             height: 100%;
-#         }}
-#         .time-display {{
-#             display: inline-block;
-#             vertical-align: middle;
-#             margin-right: 10px;
-#             padding-top: 5px;
-#         }}
-#         </style>
-#         <div class="video-container">
-#             <iframe 
-#                 src="{video_url}" 
-#                 frameborder="0" 
-#                 allowfullscreen>
-#             </iframe>
-#         </div>
-#     """, unsafe_allow_html=True)
-
-#    # Show/Hide text buttons
-#     if st.button("Show Korean", key=f"kor_{video['link']}"):
-#         st.write(f"**Korean:** {video['korean_text']}")
-#     if st.button("Show English", key=f"eng_{video['link']}"):
-#         st.write(f"**English:** {video['english_text']}")
-
-
-
-
-
 for video in videos:
     video_id = video['link']
-    video_container_id = f"video_{video_id}".replace("-", "_")
     
     # Create two columns for timestamp and replay button
-    col1, col2 = st.columns([0.17, 1.8])
+    col1, col2 = st.columns([0.17, 1.8])  # Adjust ratio as needed
     with col1:
         formatted_time = format_time(video['start'])
         st.markdown(f'<div class="time-display">{formatted_time}</div>', unsafe_allow_html=True)
+    with col2:
+        replay = st.button("🔄", key=f"replay_{video_id}")
     
+    # Set video URL based on replay button
+    if replay:
+        video_url = f"https://www.youtube.com/embed/{video_id}&start={video['start']}&end={video['end']}&autoplay=1"
+    else:
+        video_url = f"https://www.youtube.com/embed/{video_id}&start={video['start']}&end={video['end']}&autoplay=0"
+
     st.markdown(f"""
         <style>
         .video-container {{
@@ -150,26 +99,77 @@ for video in videos:
             padding-top: 5px;
         }}
         </style>
-        
         <div class="video-container">
             <iframe 
-                src="https://www.youtube.com/embed/{video_id}&start={video['start']}&end={video['end']}&autoplay=0" 
+                src="{video_url}" 
                 frameborder="0" 
                 allowfullscreen>
             </iframe>
         </div>
     """, unsafe_allow_html=True)
 
-    # Regular Streamlit button for replay
-    with col2:
-        if st.button("🔄", key=f"replay_{video_id}"):
-            st.rerun()  # This will refresh the page and restart the video
-
-    # Show/Hide text buttons
+   # Show/Hide text buttons
     if st.button("Show Korean", key=f"kor_{video['link']}"):
         st.write(f"**Korean:** {video['korean_text']}")
     if st.button("Show English", key=f"eng_{video['link']}"):
         st.write(f"**English:** {video['english_text']}")
+
+
+
+
+
+# for video in videos:
+#     video_id = video['link']
+#     video_container_id = f"video_{video_id}".replace("-", "_")
+    
+#     # Create two columns for timestamp and replay button
+#     col1, col2 = st.columns([0.17, 1.8])
+#     with col1:
+#         formatted_time = format_time(video['start'])
+#         st.markdown(f'<div class="time-display">{formatted_time}</div>', unsafe_allow_html=True)
+    
+#     st.markdown(f"""
+#         <style>
+#         .video-container {{
+#             position: relative;
+#             width: 100%;
+#             padding-bottom: 56.25%;
+#             margin-bottom: 10px;
+#         }}
+#         .video-container iframe {{
+#             position: absolute;
+#             top: 0;
+#             left: 0;
+#             width: 100%;
+#             height: 100%;
+#         }}
+#         .time-display {{
+#             display: inline-block;
+#             vertical-align: middle;
+#             margin-right: 10px;
+#             padding-top: 5px;
+#         }}
+#         </style>
+        
+#         <div class="video-container">
+#             <iframe 
+#                 src="https://www.youtube.com/embed/{video_id}&start={video['start']}&end={video['end']}&autoplay=0" 
+#                 frameborder="0" 
+#                 allowfullscreen>
+#             </iframe>
+#         </div>
+#     """, unsafe_allow_html=True)
+
+#     # Regular Streamlit button for replay
+#     with col2:
+#         if st.button("🔄", key=f"replay_{video_id}"):
+#             st.rerun()  # This will refresh the page and restart the video
+
+#     # Show/Hide text buttons
+#     if st.button("Show Korean", key=f"kor_{video['link']}"):
+#         st.write(f"**Korean:** {video['korean_text']}")
+#     if st.button("Show English", key=f"eng_{video['link']}"):
+#         st.write(f"**English:** {video['english_text']}")
 
 
 
