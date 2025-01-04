@@ -193,6 +193,13 @@ with tab1:
   
 
 with tab2:
+    st.markdown("""
+    <h2 style='text-align: center; font-size: 24px; margin-bottom: 5px;'>
+        YouTube Caption Search
+    </h2>
+    """, 
+    unsafe_allow_html=True
+    )
     # API Key section
     access_type = st.radio("Choose access method:", ["Enter Access Code", "Use your API Key"])
     
@@ -207,7 +214,8 @@ with tab2:
     else:
         user_api_key = st.text_input("Enter Your YouTube API Key", type="password", 
                                     help="Get API key from Google Cloud Console")
-        if st.button("How to get an API Key"):
+        
+        with st.expander("How to get an API Key"):
             st.markdown("""
             1. Go to [Google Cloud Console](https://console.cloud.google.com/)
             2. Create a new project or select an existing one
@@ -215,8 +223,7 @@ with tab2:
             4. Go to Credentials
             5. Click Create Credentials > API Key
             6. Copy the API key and paste it above
-            """)
-            
+            """)    
         if user_api_key:
             try:
                 # Test API key validity
