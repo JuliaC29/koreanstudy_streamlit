@@ -189,13 +189,10 @@ def get_channel_videos(channel_id):
             type="video"
         )
         response = request.execute()
-        return response['items'][:5]  # Return just the 5 you need
+        return response['items']  # Return all items
     except HttpError as e:
         logger.error(f"Error fetching videos: {str(e)}")
         return []
-
-
-
 
 # @st.cache_data(ttl=3600)
 # def get_channel_videos(channel_id):
@@ -221,19 +218,35 @@ def get_channel_videos(channel_id):
 
 
 
+# @st.cache_data(ttl=3600)
+# def search_videos(query, channel_id):  # Added selected_channel_id parameter
+#     if not youtube:
+#         logger.error("YouTube API client is not initialized")
+#         st.error("YouTube search is currently unavailable. Please try again later.")
+#         return []
+
+#     all_videos = get_channel_videos(channel_id)  # Only search in selected channel
+    
+#     # Sort all videos by view count
+#     all_videos.sort(key=lambda x: int(get_video_details(x['id']['videoId'])['viewCount']), reverse=True)
+    
+#     return all_videos[:5]
+
+
 @st.cache_data(ttl=3600)
-def search_videos(query, channel_id):  # Added selected_channel_id parameter
+def search_videos(query, channel_id):
     if not youtube:
         logger.error("YouTube API client is not initialized")
         st.error("YouTube search is currently unavailable. Please try again later.")
         return []
 
-    all_videos = get_channel_videos(channel_id)  # Only search in selected channel
+    all_videos = get_channel_videos(channel_id)  # Get all videos
     
     # Sort all videos by view count
     all_videos.sort(key=lambda x: int(get_video_details(x['id']['videoId'])['viewCount']), reverse=True)
     
-    return all_videos[]
+    return all_videos[:5]  # Return top 5 here
+
 
 # @st.cache_data(ttl=3600)
 # def search_videos(query, channel_id):
