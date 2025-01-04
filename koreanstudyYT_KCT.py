@@ -945,7 +945,7 @@ with tab2:
 
 with tab3:
     st.markdown("""
-    <h2 style='text-align: center; font-size: 32px; margin-bottom: 30px;'>
+    <h2 style='text-align: center; font-size: 24px; margin-bottom: 5px;'>
         YouTube Caption Search
     </h2>
     """, 
