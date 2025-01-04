@@ -86,47 +86,35 @@ def translate_text(text):
 
 @st.cache_data(ttl=3600)
 def get_channel_videos(channel_id):
-    videos = []
-    next_page_token = None
-    
     try:
-        while len(videos) < 9:  # Limit to 5 videos per channel
-            request = youtube.search().list(
-                part="id,snippet",
-                channelId=channel_id,
-                maxResults=10,
-                order="viewCount",
-                type="video",
-                pageToken=next_page_token
-            )
-            response = request.execute()
-            
-            videos.extend(response['items'])
-            next_page_token = response.get('nextPageToken')
-            
-            if not next_page_token:
-                break
+        request = youtube.search().list(
+            part="id,snippet",
+            channelId=channel_id,
+            maxResults=50,  # Get maximum results per request
+            order="viewCount",
+            type="video"
+        )
+        response = request.execute()
+        return response['items']  # Return all items
     except HttpError as e:
-        logger.error(f"An error occurred while fetching videos for channel {channel_id}: {str(e)}")
-        st.error(f"An error occurred while fetching videos. Please try again later.")
+        logger.error(f"Error fetching videos: {str(e)}")
         return []
-    
-    return videos
+
 
 
 @st.cache_data(ttl=3600)
-def search_videos(query, channel_id):  # Added selected_channel_id parameter
+def search_videos(query, channel_id):
     if not youtube:
         logger.error("YouTube API client is not initialized")
         st.error("YouTube search is currently unavailable. Please try again later.")
         return []
 
-    all_videos = get_channel_videos(channel_id)  # Only search in selected channel
+    all_videos = get_channel_videos(channel_id)  # Get all videos
     
     # Sort all videos by view count
     all_videos.sort(key=lambda x: int(get_video_details(x['id']['videoId'])['viewCount']), reverse=True)
     
-    return all_videos[:2]
+    return all_videos[:5]  # Return top 5 here
 
 
 @st.cache_data(ttl=86400)
@@ -209,7 +197,7 @@ with tab2:
     access_type = st.radio("Choose access method:", ["Enter Access Code", "Use your API Key"])
     
     if access_type == "Enter Access Code":
-        access_code = st.text_input("Enter access code", type="password", help="Contact instructor for code")
+        access_code = st.text_input("Enter access code", type="password") #help="Contact instructor for code"
         if access_code:
             try:
                 user_api_key = st.secrets.api_codes[access_code]
