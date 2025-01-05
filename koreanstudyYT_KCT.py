@@ -327,10 +327,10 @@ with tab1:
 # Selected Youtube Clips
 with tab2:
    # Access code check at the start of tab2
-    access_code = st.text_input("Enter access code", type="password", key="tab2_access")
-    if access_code:
+    passcode = st.text_input("Enter access code", type="password", key="tab2_access")
+    if passcode:
         try:
-            if access_code in st.secrets["access_codes"]:  # Check against valid codes 
+            if passcode in st.secrets.passcodes[passcode]:  # Check against valid codes 
                 # Rest of your tab2 content
                 lesson = st.selectbox("Select lesson", lesson_list_grammar)
 
