@@ -182,7 +182,7 @@ def display_video_segments(video_id, matches):
 
 # Streamlit app setup with tabs for different sections
 st.markdown("<h1 class='title'>한국어 단어와 문법</h1>", unsafe_allow_html=True)
-tab1, tab2 = st.tabs(["Quizlet", "YouTube"])
+tab1, tab2, tab3 = st.tabs(["Quizlet", "Video Examples", "YouTube Search"])
 
 with tab1:
     lesson = st.selectbox("Select a lesson", lesson_list)
@@ -192,7 +192,90 @@ with tab1:
             st.markdown("Click: " f"[{lesson_code}]({link})", unsafe_allow_html=True)
   
 
+# Selected Youtube Clips
 with tab2:
+   # Access code check at the start of tab2
+    passcode = st.text_input("Enter access code", type="password", key="tab2_passcode")
+    if passcode:
+        try:
+            if passcode in st.secrets["passcode"]:  # Check against valid codes 
+                # Rest of your tab2 content
+                lesson = st.selectbox("Select lesson", lesson_list_grammar)
+
+                if lesson:
+                    lesson_data = df_grammar[df_grammar['lesson'] == lesson]
+                    grammar_points = lesson_data['grammar_point'].unique().tolist()
+                    
+
+
+                    if grammar_points:
+                        selected_grammar = st.selectbox("Select grammar point", grammar_points)
+                        if selected_grammar:
+                            videos = lesson_data[lesson_data['grammar_point'] == selected_grammar]
+                            if pd.isna(videos['youtube_link'].iloc[0]) or videos['youtube_link'].iloc[0] == "COMING_SOON":
+                                st.info("Video examples for this grammar point will be added soon!")
+                            else:
+
+
+                                for _, video in videos.iterrows():
+                                    video_id = extract_video_id(video['youtube_link'])
+                                    # Clean video ID for all button keys
+                                    clean_video_id = video_id.split('?')[0].split('&')[0]  # Remove any parameters
+                                    
+                                    video_url = f"https://www.youtube.com/embed/{video_id}&start={int(video['timestamp'])}&end={int(video['end'])}&loop=1"
+                                    
+                                    # Add replay button with cleaned ID
+                                    if st.button("🔄", key=f"replay_{clean_video_id}_{video['timestamp']}"):
+                                        video_url = f"https://www.youtube.com/embed/{video_id}&start={int(video['timestamp'])}&end={int(video['end'])}&autoplay=1"
+                                    
+                                    # Video container
+                                    video_html = f"""
+                                    <style>
+                                    .video-container {{
+                                        position: relative;
+                                        width: 100%;
+                                        padding-bottom: 56.25%;
+                                        margin-bottom: 20px;
+                                    }}
+                                    .video-container iframe {{
+                                        position: absolute;
+                                        top: 0;
+                                        left: 0;
+                                        width: 100%;
+                                        height: 100%;
+                                    }}
+                                    </style>
+                                    <div class="video-container">
+                                        <iframe 
+                                            src="{video_url}" 
+                                            frameborder="0" 
+                                            allowfullscreen>
+                                        </iframe>
+                                    </div>
+                                    """          
+                                    
+                                    st.markdown(video_html, unsafe_allow_html=True)
+                                    
+                                    # Show/Hide text buttons with cleaned ID
+                                    if st.button("Show Korean", key=f"kor_{clean_video_id}_{video['timestamp']}"):
+                                        st.write(f"**Korean:** {video['korean_text']}")
+                                    if st.button("Show English", key=f"eng_{clean_video_id}_{video['timestamp']}"):
+                                        st.write(f"**English:** {video['english_text']}")
+
+
+
+            else:
+                st.error("Invalid access code")
+                st.stop()
+        except:
+            st.error("Invalid access code")
+            st.stop()
+    else:
+        st.warning("Please enter an access code to view content")
+        st.stop()
+
+
+with tab3:
     st.markdown("""
     <h2 style='text-align: center; font-size: 24px; margin-bottom: 5px;'>
         YouTube Caption Search
@@ -204,7 +287,7 @@ with tab2:
     access_type = st.radio("Choose access method:", ["Enter Access Code", "Use your API Key"])
     
     if access_type == "Enter Access Code":
-        access_code = st.text_input("Enter access code", type="password") #help="Contact instructor for code"
+        access_code = st.text_input("Enter access code", type="password", key="tab3_access") #help="Contact instructor for code"
         if access_code:
             try:
                 user_api_key = st.secrets.api_codes[access_code]
