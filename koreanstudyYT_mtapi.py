@@ -48,6 +48,50 @@ def get_lesson_link(lesson):
         logger.error(f"Error in get_lesson_link: {e}")
         return None, None
 
+# Load CSV data for YouTube
+@st.cache_data
+def load_grammar_csv_data():
+    try:
+        df = pd.read_csv('data/fcstr2.csv')  # Your YouTube CSV file
+        lesson_list = df['lesson'].unique().tolist()
+
+        return df, lesson_list
+    except Exception as e:
+        st.error(f"Error loading grammar CSV file: {e}")
+        return None, []
+
+df_grammar, lesson_list_grammar = load_grammar_csv_data()
+
+
+# YouTube
+def get_grammar_videos(lesson):
+    try:
+        videos_data = df_grammar[df_grammar['lesson'] == lesson]
+        grammar_points = []
+        videos_list = []
+        
+        
+        for index, row in videos_data.iterrows():
+            grammar_points.append(row['grammar_point'])
+            #videos_list.append((row['youtube_link'], row['timestamp']))
+            videos_list.append((row['youtube_link'], row['timestamp'], row['end']))
+           
+
+        return list(set(grammar_points)), videos_list
+    except Exception as e:
+        logger.error(f"Error getting videos: {e}")
+        return [], []
+
+
+def extract_video_id(url):
+    try:
+        if 'v=' in url:
+            return url.split('v=')[1].split('&')[0]
+        elif 'youtu.be/' in url:
+            return url.split('youtu.be/')[1]
+        return url
+    except:
+        return url
 
 # Initialize Google Translator
 translator = Translator()
