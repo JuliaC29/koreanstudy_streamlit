@@ -421,13 +421,22 @@ with tab3:
             else:
                 st.error("Please enter a search term and ensure API key is valid")
 
+
     else:
         youtube_link = st.text_input("Enter YouTube link:", key="video_link_tab2")
         
         if st.button("Search in Video", key="video_search"):
             if youtube and youtube_link and search_term:
                 try:
-                    video_id = youtube_link.split('v=')[1]
+                    # Handle different YouTube URL formats
+                    if 'youtu.be/' in youtube_link:
+                        video_id = youtube_link.split('youtu.be/')[1].split('?')[0]
+                    elif 'v=' in youtube_link:
+                        video_id = youtube_link.split('v=')[1].split('&')[0]
+                    else:
+                        st.error("Invalid YouTube URL format")
+                        st.stop()
+
                     transcript = get_caption_with_timestamps(video_id)
                     if transcript:
                         matches = search_caption_with_context(transcript, search_term)
@@ -440,7 +449,6 @@ with tab3:
                     st.error(f"An error occurred: {str(e)}")
             else:
                 st.write("Please enter both a YouTube link and a search term.")
-
 
 # Tab 3: Korean Conversation Table
 with tab4:
