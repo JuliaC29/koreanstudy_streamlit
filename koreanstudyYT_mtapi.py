@@ -298,7 +298,15 @@ with tab2:
         if st.button("Search in Video", key="video_search"):
             if youtube and youtube_link and search_term:
                 try:
-                    video_id = youtube_link.split('v=')[1]
+                    # Handle different YouTube URL formats
+                    if 'youtu.be/' in youtube_link:
+                        video_id = youtube_link.split('youtu.be/')[1].split('?')[0]
+                    elif 'v=' in youtube_link:
+                        video_id = youtube_link.split('v=')[1].split('&')[0]
+                    else:
+                        st.error("Invalid YouTube URL format")
+                        st.stop()
+
                     transcript = get_caption_with_timestamps(video_id)
                     if transcript:
                         matches = search_caption_with_context(transcript, search_term)
@@ -311,5 +319,3 @@ with tab2:
                     st.error(f"An error occurred: {str(e)}")
             else:
                 st.write("Please enter both a YouTube link and a search term.")
-
-
