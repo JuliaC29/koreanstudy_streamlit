@@ -249,7 +249,7 @@ def display_video_segments(video_id, matches):
 
 # Streamlit app setup with tabs for different sections
 st.markdown("<h1 class='title'>한국어 단어와 문법</h1>", unsafe_allow_html=True)
-tab1, tab2, tab3, tab4, tab5, tab6, tab7= st.tabs(["Quizlet", "Grammar", "YouTube", "Korean Conversation Table", "Books", "Reading Practice", "Poster"])
+tab1, tab2, tab3, tab4, tab5, tab6, tab7= st.tabs(["Quizlet", "Video Examples",, "YouTube Search", "Korean Conversation Table", "Books", "Reading Practice", "Poster"])
 
 
 with tab1:
