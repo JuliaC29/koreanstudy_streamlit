@@ -407,13 +407,13 @@ with tab2:
 
             else:
                 st.error("Invalid access code")
-                #st.stop()
+                st.stop()
         except:
             st.error("Invalid access code")
-            #st.stop()
+            st.stop()
     else:
         st.warning("Please enter an access code to view content")
-        #st.stop()
+        st.stop()
 
 
 
