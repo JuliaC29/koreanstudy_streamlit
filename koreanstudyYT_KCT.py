@@ -330,7 +330,7 @@ with tab2:
     access_code = st.text_input("Enter access code", type="password")
     if access_code:
         try:
-            if access_code in st.secrets.access_codes["access_codes"]:  # Check against valid codes 
+            if access_code in st.secrets["access_codes"]:  # Check against valid codes 
                 # Rest of your tab2 content
                 lesson = st.selectbox("Select lesson", lesson_list_grammar)
 
