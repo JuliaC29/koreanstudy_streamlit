@@ -249,7 +249,7 @@ def display_video_segments(video_id, matches):
 
 # Streamlit app setup with tabs for different sections
 st.markdown("<h1 class='title'>한국어 단어와 문법</h1>", unsafe_allow_html=True)
-tab1, tab2, tab3, tab4, tab5, tab6, tab7= st.tabs(["Quizlet", "Video Examples",, "YouTube Search", "Korean Conversation Table", "Books", "Reading Practice", "Poster"])
+tab1, tab2, tab3, tab4, tab5, tab6, tab7= st.tabs(["Quizlet", "Video Examples", "YouTube Search", "Korean Conversation Table", "Books", "Reading Practice", "Poster"])
 
 
 with tab1:
@@ -322,7 +322,16 @@ with tab1:
 #                         if st.button("Show English", key=f"eng_{clean_video_id}_{video['timestamp']}"):
 #                             st.write(f"**English:** {video['english_text']}")
 
-
+if tab2:  # Check if tab2 is active
+    passcode = st.text_input("Enter passcode", type="password", key="tab2_passcode")
+    if not passcode:
+        st.warning("Please enter a passcode to view content")
+    elif passcode not in st.secrets["passcode"]:
+        st.error("Invalid passcode")
+    else:
+        # Your existing tab2 content here
+        lesson = st.selectbox("Select lesson", lesson_list_grammar)
+        # ... rest of tab2 code ...
 
 # Selected Youtube Clips
 with tab2:
@@ -398,13 +407,13 @@ with tab2:
 
             else:
                 st.error("Invalid access code")
-                st.stop()
+                #st.stop()
         except:
             st.error("Invalid access code")
-            st.stop()
+            #st.stop()
     else:
         st.warning("Please enter an access code to view content")
-        st.stop()
+        #st.stop()
 
 
 
