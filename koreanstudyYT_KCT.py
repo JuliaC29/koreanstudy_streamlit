@@ -261,66 +261,153 @@ with tab1:
 
 
 
-with tab2:
-    lesson = st.selectbox("Select lesson", lesson_list_grammar)
+# with tab2:
+#     lesson = st.selectbox("Select lesson", lesson_list_grammar)
 
-    if lesson:
-        lesson_data = df_grammar[df_grammar['lesson'] == lesson]
-        grammar_points = lesson_data['grammar_point'].unique().tolist()
+#     if lesson:
+#         lesson_data = df_grammar[df_grammar['lesson'] == lesson]
+#         grammar_points = lesson_data['grammar_point'].unique().tolist()
         
-        if grammar_points:
-            selected_grammar = st.selectbox("Select grammar point", grammar_points)
-            if selected_grammar:
-                videos = lesson_data[lesson_data['grammar_point'] == selected_grammar]
-                if pd.isna(videos['youtube_link'].iloc[0]) or videos['youtube_link'].iloc[0] == "COMING_SOON":
-                    st.info("Video examples for this grammar point will be added soon!")
-                else:
+#         if grammar_points:
+#             selected_grammar = st.selectbox("Select grammar point", grammar_points)
+#             if selected_grammar:
+#                 videos = lesson_data[lesson_data['grammar_point'] == selected_grammar]
+#                 if pd.isna(videos['youtube_link'].iloc[0]) or videos['youtube_link'].iloc[0] == "COMING_SOON":
+#                     st.info("Video examples for this grammar point will be added soon!")
+#                 else:
 
 
-                    for _, video in videos.iterrows():
-                        video_id = extract_video_id(video['youtube_link'])
-                        # Clean video ID for all button keys
-                        clean_video_id = video_id.split('?')[0].split('&')[0]  # Remove any parameters
+#                     for _, video in videos.iterrows():
+#                         video_id = extract_video_id(video['youtube_link'])
+#                         # Clean video ID for all button keys
+#                         clean_video_id = video_id.split('?')[0].split('&')[0]  # Remove any parameters
                         
-                        video_url = f"https://www.youtube.com/embed/{video_id}&start={int(video['timestamp'])}&end={int(video['end'])}&loop=1"
+#                         video_url = f"https://www.youtube.com/embed/{video_id}&start={int(video['timestamp'])}&end={int(video['end'])}&loop=1"
                         
-                        # Add replay button with cleaned ID
-                        if st.button("🔄", key=f"replay_{clean_video_id}_{video['timestamp']}"):
-                            video_url = f"https://www.youtube.com/embed/{video_id}&start={int(video['timestamp'])}&end={int(video['end'])}&autoplay=1"
+#                         # Add replay button with cleaned ID
+#                         if st.button("🔄", key=f"replay_{clean_video_id}_{video['timestamp']}"):
+#                             video_url = f"https://www.youtube.com/embed/{video_id}&start={int(video['timestamp'])}&end={int(video['end'])}&autoplay=1"
                         
-                        # Video container
-                        video_html = f"""
-                        <style>
-                        .video-container {{
-                            position: relative;
-                            width: 100%;
-                            padding-bottom: 56.25%;
-                            margin-bottom: 20px;
-                        }}
-                        .video-container iframe {{
-                            position: absolute;
-                            top: 0;
-                            left: 0;
-                            width: 100%;
-                            height: 100%;
-                        }}
-                        </style>
-                        <div class="video-container">
-                            <iframe 
-                                src="{video_url}" 
-                                frameborder="0" 
-                                allowfullscreen>
-                            </iframe>
-                        </div>
-                        """          
+#                         # Video container
+#                         video_html = f"""
+#                         <style>
+#                         .video-container {{
+#                             position: relative;
+#                             width: 100%;
+#                             padding-bottom: 56.25%;
+#                             margin-bottom: 20px;
+#                         }}
+#                         .video-container iframe {{
+#                             position: absolute;
+#                             top: 0;
+#                             left: 0;
+#                             width: 100%;
+#                             height: 100%;
+#                         }}
+#                         </style>
+#                         <div class="video-container">
+#                             <iframe 
+#                                 src="{video_url}" 
+#                                 frameborder="0" 
+#                                 allowfullscreen>
+#                             </iframe>
+#                         </div>
+#                         """          
                         
-                        st.markdown(video_html, unsafe_allow_html=True)
+#                         st.markdown(video_html, unsafe_allow_html=True)
                         
-                        # Show/Hide text buttons with cleaned ID
-                        if st.button("Show Korean", key=f"kor_{clean_video_id}_{video['timestamp']}"):
-                            st.write(f"**Korean:** {video['korean_text']}")
-                        if st.button("Show English", key=f"eng_{clean_video_id}_{video['timestamp']}"):
-                            st.write(f"**English:** {video['english_text']}")
+#                         # Show/Hide text buttons with cleaned ID
+#                         if st.button("Show Korean", key=f"kor_{clean_video_id}_{video['timestamp']}"):
+#                             st.write(f"**Korean:** {video['korean_text']}")
+#                         if st.button("Show English", key=f"eng_{clean_video_id}_{video['timestamp']}"):
+#                             st.write(f"**English:** {video['english_text']}")
+
+
+
+# Selected Youtube Clips
+with tab2:
+   # Access code check at the start of tab2
+    access_code = st.text_input("Enter access code", type="password")
+    if access_code:
+        try:
+            if access_code in st.secrets.access_codes["access_codes"]:  # Check against valid codes 
+                # Rest of your tab2 content
+                lesson = st.selectbox("Select lesson", lesson_list_grammar)
+
+                if lesson:
+                    lesson_data = df_grammar[df_grammar['lesson'] == lesson]
+                    grammar_points = lesson_data['grammar_point'].unique().tolist()
+                    
+
+
+                    if grammar_points:
+                        selected_grammar = st.selectbox("Select grammar point", grammar_points)
+                        if selected_grammar:
+                            videos = lesson_data[lesson_data['grammar_point'] == selected_grammar]
+                            if pd.isna(videos['youtube_link'].iloc[0]) or videos['youtube_link'].iloc[0] == "COMING_SOON":
+                                st.info("Video examples for this grammar point will be added soon!")
+                            else:
+
+
+                                for _, video in videos.iterrows():
+                                    video_id = extract_video_id(video['youtube_link'])
+                                    # Clean video ID for all button keys
+                                    clean_video_id = video_id.split('?')[0].split('&')[0]  # Remove any parameters
+                                    
+                                    video_url = f"https://www.youtube.com/embed/{video_id}&start={int(video['timestamp'])}&end={int(video['end'])}&loop=1"
+                                    
+                                    # Add replay button with cleaned ID
+                                    if st.button("🔄", key=f"replay_{clean_video_id}_{video['timestamp']}"):
+                                        video_url = f"https://www.youtube.com/embed/{video_id}&start={int(video['timestamp'])}&end={int(video['end'])}&autoplay=1"
+                                    
+                                    # Video container
+                                    video_html = f"""
+                                    <style>
+                                    .video-container {{
+                                        position: relative;
+                                        width: 100%;
+                                        padding-bottom: 56.25%;
+                                        margin-bottom: 20px;
+                                    }}
+                                    .video-container iframe {{
+                                        position: absolute;
+                                        top: 0;
+                                        left: 0;
+                                        width: 100%;
+                                        height: 100%;
+                                    }}
+                                    </style>
+                                    <div class="video-container">
+                                        <iframe 
+                                            src="{video_url}" 
+                                            frameborder="0" 
+                                            allowfullscreen>
+                                        </iframe>
+                                    </div>
+                                    """          
+                                    
+                                    st.markdown(video_html, unsafe_allow_html=True)
+                                    
+                                    # Show/Hide text buttons with cleaned ID
+                                    if st.button("Show Korean", key=f"kor_{clean_video_id}_{video['timestamp']}"):
+                                        st.write(f"**Korean:** {video['korean_text']}")
+                                    if st.button("Show English", key=f"eng_{clean_video_id}_{video['timestamp']}"):
+                                        st.write(f"**English:** {video['english_text']}")
+
+
+
+            else:
+                st.error("Invalid access code")
+                st.stop()
+        except:
+            st.error("Invalid access code")
+            st.stop()
+    else:
+        st.warning("Please enter an access code to view content")
+        st.stop()
+
+
+
 
 
 
