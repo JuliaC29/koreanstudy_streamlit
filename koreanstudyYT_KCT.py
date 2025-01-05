@@ -275,12 +275,17 @@ with tab2:
                 if pd.isna(videos['youtube_link'].iloc[0]) or videos['youtube_link'].iloc[0] == "COMING_SOON":
                     st.info("Video examples for this grammar point will be added soon!")
                 else:
+
+
                     for _, video in videos.iterrows():
                         video_id = extract_video_id(video['youtube_link'])
+                        # Clean video ID for all button keys
+                        clean_video_id = video_id.split('?')[0].split('&')[0]  # Remove any parameters
+                        
                         video_url = f"https://www.youtube.com/embed/{video_id}&start={int(video['timestamp'])}&end={int(video['end'])}&loop=1"
                         
-                        # Add replay button
-                        if st.button("Replay", key=f"replay_{video_id}"):
+                        # Add replay button with cleaned ID
+                        if st.button("🔄", key=f"replay_{clean_video_id}_{video['timestamp']}"):
                             video_url = f"https://www.youtube.com/embed/{video_id}&start={int(video['timestamp'])}&end={int(video['end'])}&autoplay=1"
                         
                         # Video container
@@ -310,14 +315,12 @@ with tab2:
                         """          
                         
                         st.markdown(video_html, unsafe_allow_html=True)
-                        st.write(f"{video['time_format']}")
-
-
-                        # Add buttons in rows instead of columns
-                        if st.button("Show Korean", key=f"kor_{video_id}"):
-                           st.write(f"**Korean:** {video['korean_text']}")
-                        if st.button("Show English", key=f"eng_{video_id}"):
-                           st.write(f"**English:** {video['english_text']}")
+                        
+                        # Show/Hide text buttons with cleaned ID
+                        if st.button("Show Korean", key=f"kor_{clean_video_id}_{video['timestamp']}"):
+                            st.write(f"**Korean:** {video['korean_text']}")
+                        if st.button("Show English", key=f"eng_{clean_video_id}_{video['timestamp']}"):
+                            st.write(f"**English:** {video['english_text']}")
 
 
 
