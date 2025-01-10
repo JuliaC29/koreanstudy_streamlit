@@ -262,17 +262,19 @@ with tab2:
                         st.info("Video examples for this grammar point will be added soon!")
                     else:
 
-
                         for _, video in videos.iterrows():
                             video_id = extract_video_id(video['youtube_link'])
-                            # Clean video ID for all button keys
-                            clean_video_id = video_id.split('?')[0].split('&')[0]  # Remove any parameters
+                            clean_video_id = video_id.split('?')[0].split('&')[0]
                             
                             video_url = f"https://www.youtube.com/embed/{video_id}&start={int(video['timestamp'])}&end={int(video['end'])}&loop=1"
                             
-                            # Add replay button with cleaned ID
-                            if st.button("🔄", key=f"replay_{clean_video_id}_{video['timestamp']}"):
-                                video_url = f"https://www.youtube.com/embed/{video_id}&start={int(video['timestamp'])}&end={int(video['end'])}&autoplay=1"
+                            # Create two columns for replay button and timestamp
+                            col1, col2 = st.columns([0.12, 1.8])  # Adjust ratio as needed
+                            with col1:
+                                if st.button("🔄", key=f"replay_{clean_video_id}_{video['timestamp']}"):
+                                    video_url = f"https://www.youtube.com/embed/{video_id}&start={int(video['timestamp'])}&end={int(video['end'])}&autoplay=1"
+                            with col2:
+                                st.markdown(f"<div style='padding-top: 5px;'>{video['time_format']}</div>", unsafe_allow_html=True)
                             
                             # Video container
                             video_html = f"""
@@ -307,8 +309,6 @@ with tab2:
                                 st.write(f"**Korean:** {video['korean_text']}")
                             if st.button("Show English", key=f"eng_{clean_video_id}_{video['timestamp']}"):
                                 st.write(f"**English:** {video['english_text']}")
-
-
 
 
 with tab3:
