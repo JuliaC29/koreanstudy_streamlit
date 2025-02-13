@@ -267,7 +267,8 @@ with tab2:
                             clean_video_id = video_id.split('?')[0].split('&')[0]
                             
                             video_url = f"https://www.youtube.com/embed/{video_id}&start={int(video['timestamp'])}&end={int(video['end'])}&loop=1"
-                            
+                            youtube_full_url = f"https://www.youtube.com/watch?v={video_id}&t={int(video['timestamp'])}s"
+
                             # Create two columns for replay button and timestamp
                             col1, col2 = st.columns([0.12, 1.8])  # Adjust ratio as needed
                             with col1:
@@ -275,6 +276,7 @@ with tab2:
                                     video_url = f"https://www.youtube.com/embed/{video_id}&start={int(video['timestamp'])}&end={int(video['end'])}&autoplay=1"
                             with col2:
                                 st.markdown(f"<div style='padding-top: 5px;'>{video['time_format']}</div>", unsafe_allow_html=True)
+                                st.markdown(f"<div style='padding-top: 5px;'><a href='{youtube_full_url}' target='_blank'>Watch on YouTube</a></div>", unsafe_allow_html=True)
                             
                             # Video container
                             video_html = f"""
