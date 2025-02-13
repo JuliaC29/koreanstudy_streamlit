@@ -357,15 +357,16 @@ with tab2:
                             clean_video_id = video_id.split('?')[0].split('&')[0]
                             
                             video_url = f"https://www.youtube.com/embed/{video_id}&start={int(video['timestamp'])}&end={int(video['end'])}&loop=1"
+                            youtube_full_url = f"https://www.youtube.com/watch?v={video_id}&t={int(video['timestamp'])}s"
                             
-                            # Create two columns for replay button and timestamp
-                            col1, col2 = st.columns([0.12, 1.8])  # Adjust ratio as needed
+                            col1, col2, col3 = st.columns([0.12, 0.3, 0.8])  # Adjusted ratios to bring elements closer
                             with col1:
                                 if st.button("🔄", key=f"replay_{clean_video_id}_{video['timestamp']}"):
                                     video_url = f"https://www.youtube.com/embed/{video_id}&start={int(video['timestamp'])}&end={int(video['end'])}&autoplay=1"
                             with col2:
-                                st.markdown(f"<div style='padding-top: 5px;'>{video['time_format']}</div>", unsafe_allow_html=True)
-                            
+                                st.markdown(f"<div style='padding-top: 5px; margin-left: -20px;'>{video['time_format']}</div>", unsafe_allow_html=True)
+                            with col3:
+                                st.markdown(f"<div style='padding-top: 5px; margin-left: -40px;'><a href='{youtube_full_url}' target='_blank'>Watch on YouTube</a></div>", unsafe_allow_html=True)
                             # Video container
                             video_html = f"""
                             <style>
@@ -393,12 +394,12 @@ with tab2:
                             """          
                             
                             st.markdown(video_html, unsafe_allow_html=True)
-                            
+
                             # Show/Hide text buttons with cleaned ID
                             if st.button("Show Korean", key=f"kor_{clean_video_id}_{video['timestamp']}"):
                                 st.write(f"**Korean:** {video['korean_text']}")
                             if st.button("Show English", key=f"eng_{clean_video_id}_{video['timestamp']}"):
-                                st.write(f"**English:** {video['english_text']}")
+                                st.write(f"**English:** {video['english_text']}") 
 
 
 
