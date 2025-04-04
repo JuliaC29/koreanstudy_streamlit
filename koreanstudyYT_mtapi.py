@@ -225,8 +225,10 @@ def display_video_segments(video_id, matches):
         embed_youtube_video(video_id, int(start_time))
 
 # Streamlit app setup with tabs for different sections
-st.markdown("<h1 class='title'>한국어 단어와 문법</h1>", unsafe_allow_html=True)
-tab1, tab2, tab3, tab4 = st.tabs(["Quizlet", "Video Examples", "YouTube Search", "NEW"])
+#st.markdown("<h1 class='title'>한국어 단어와 문법</h1>", unsafe_allow_html=True)
+st.markdown("<h1 class='title' style='text-align: center;'>한국어 단어와 문법</h1>", unsafe_allow_html=True)
+st.markdown("<div style='text-align: center;'><a href='https://mykoreanstudy.netlify.app/'>Visit My Korean Study Website</a></div>", unsafe_allow_html=True)
+tab1, tab2, tab3 = st.tabs(["Quizlet", "Video Examples", "YouTube Search"])
 
 with tab1:
     lesson = st.selectbox("Select a lesson", lesson_list)
@@ -444,7 +446,3 @@ with tab3:
             else:
                 st.write("Please enter both a YouTube link and a search term.")
 
-# New Website Link
-
-with tab4:
-    st.markdown("[Visit My Korean Study Website](https://mykoreanstudy.netlify.app/)")
