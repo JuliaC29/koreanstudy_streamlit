@@ -445,5 +445,6 @@ with tab3:
                 st.write("Please enter both a YouTube link and a search term.")
 
 # New Website Link
+
 with tab4:
-    st.write("My Korean Study: https://mykoreanstudy.netlify.app/")
+    st.markdown("[Visit My Korean Study Website](https://mykoreanstudy.netlify.app/)")
