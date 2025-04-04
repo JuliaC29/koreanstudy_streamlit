@@ -226,8 +226,8 @@ def display_video_segments(video_id, matches):
 
 # Streamlit app setup with tabs for different sections
 #st.markdown("<h1 class='title'>한국어 단어와 문법</h1>", unsafe_allow_html=True)
-st.markdown("<h1 class='title' style='text-align: center;'>한국어 단어와 문법</h1>", unsafe_allow_html=True)
-st.markdown("<div style='text-align: center;'><a href='https://mykoreanstudy.netlify.app/'>Visit My Korean Study Website</a></div>", unsafe_allow_html=True)
+st.markdown("<h1 class='title' style='text-align: center; margin-bottom: 10px;'>한국어 단어와 문법</h1>", unsafe_allow_html=True)
+st.markdown("<div style='text-align: center; margin-top: -10px;'><a href='https://mykoreanstudy.netlify.app/'>Visit My Korean Study Website</a></div>", unsafe_allow_html=True)
 tab1, tab2, tab3 = st.tabs(["Quizlet", "Video Examples", "YouTube Search"])
 
 with tab1:
