@@ -226,7 +226,7 @@ def display_video_segments(video_id, matches):
 
 # Streamlit app setup with tabs for different sections
 st.markdown("<h1 class='title'>한국어 단어와 문법</h1>", unsafe_allow_html=True)
-tab1, tab2, tab3 = st.tabs(["Quizlet", "Video Examples", "YouTube Search"])
+tab1, tab2, tab3, tab4 = st.tabs(["Quizlet", "Video Examples", "YouTube Search", "NEW"])
 
 with tab1:
     lesson = st.selectbox("Select a lesson", lesson_list)
@@ -443,3 +443,7 @@ with tab3:
                     st.error(f"An error occurred: {str(e)}")
             else:
                 st.write("Please enter both a YouTube link and a search term.")
+
+# New Website Link
+with tab4:
+    'My Korean Study: https://mykoreanstudy.netlify.app/'
