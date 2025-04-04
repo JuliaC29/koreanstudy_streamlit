@@ -446,4 +446,4 @@ with tab3:
 
 # New Website Link
 with tab4:
-    'My Korean Study: https://mykoreanstudy.netlify.app/'
+    st.write("My Korean Study: https://mykoreanstudy.netlify.app/")
