@@ -315,6 +315,7 @@ with tab2:
                                 st.write(f"**English:** {video['english_text']}")
 
 
+
 with tab3:
     st.markdown("""
     <h2 style='text-align: center; font-size: 24px; margin-bottom: 5px;'>
@@ -323,56 +324,34 @@ with tab3:
     """, 
     unsafe_allow_html=True
     )
-    # API Key section
-    access_type = st.radio("Choose access method:", ["Enter Access Code", "Use your API Key"])
     
-    if access_type == "Enter Access Code":
-        access_code = st.text_input("Enter access code", type="password", key="youtube_search_access") #help="Contact instructor for code")
-        if access_code:
-            try:
-                user_api_key = st.secrets.api_codes[access_code]
-            except:
-                st.error("Invalid access code.")
-                st.stop()
-    else:
+    # API Key section (only showing API key option)
+    with st.expander("YouTube API Key"):
         user_api_key = st.text_input("Enter Your YouTube API Key", type="password", 
                                     help="Get API key from Google Cloud Console")
 
-        with st.expander("How to get an API Key"):
-            st.markdown("""
-            1. Go to [Google Cloud Console](https://console.cloud.google.com/)
-            2. Create a new project or select an existing one
-            3. Enable the YouTube Data API v3
-            4. Go to Credentials
-            5. Click Create Credentials > API Key
-            6. Copy the API key and paste it above
-            """)   
-        if user_api_key:
-            try:
-                # Test API key validity
-                youtube = build('youtube', 'v3', developerKey=user_api_key)
-                test = youtube.videos().list(part="snippet", id="dQw4w9WgXcQ").execute()
-            except:
-                st.error("Invalid API key.")
-                st.stop()
-        else:
-            st.warning("Please enter an API key.")
-            st.stop()
-
-
-        if not user_api_key:
-            st.warning("Please enter your API key to continue.")
-            st.stop()
-
-
-    # try:
+        st.markdown("""
+        How to get an API Key:
+        1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+        2. Create a new project or select an existing one
+        3. Enable the YouTube Data API v3
+        4. Go to Credentials
+        5. Click Create Credentials > API Key
+        6. Copy the API key and paste it above
+        """)   
+        
+    # Validate API key
+    if not user_api_key:
+        st.warning("Please enter your API key to use this feature.")
+        st.stop()
+        
     try:
         youtube = build('youtube', 'v3', developerKey=user_api_key)
+        test = youtube.videos().list(part="snippet", id="dQw4w9WgXcQ").execute()
         logger.info("YouTube API initialized successfully")
     except Exception as e:
-        #st.error("Invalid API key. Please check and try again.")
+        st.error("Invalid API key. Please check and try again.")
         st.stop()
-
 
     # Search methods
     search_method = st.radio(
@@ -384,12 +363,9 @@ with tab3:
 
     if search_method == "Search by Channel":
         channel_options = {
-            
             "SBS Running Man": "UCaKod3X1Tn4c7Ci0iUKcvzQ",
             "DdeunDdeun": "UCDNvRZRgvkBTUkQzFoT_8rA", 
             "channel fullmoon" : "UCQ2O-iftmnlfrBuNsUUTofQ",
-             
-    
         }
         selected_channel = st.selectbox("Select Channel", options=list(channel_options.keys()))
 
@@ -415,9 +391,7 @@ with tab3:
                 except Exception as e:
                     st.error(f"An error occurred: {str(e)}")
             else:
-                st.error("Please enter a search term and ensure API key is valid")
-
-
+                st.error("Please enter a search term")
     else:
         youtube_link = st.text_input("Enter YouTube link:", key="video_link_tab2")
         
@@ -445,4 +419,14 @@ with tab3:
                     st.error(f"An error occurred: {str(e)}")
             else:
                 st.write("Please enter both a YouTube link and a search term.")
+
+
+
+
+
+
+
+
+
+
 
