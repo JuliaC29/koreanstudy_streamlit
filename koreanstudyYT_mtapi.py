@@ -209,7 +209,7 @@ st.markdown("""
         font-weight: 500;
         transition: color 0.3s ease;
     ' onmouseover='this.style.color="#764ba2";' onmouseout='this.style.color="#667eea";'>
-        🌐Visit My Korean Study Website
+        <span style='font-size: 12px;'>🌐</span> Visit My Korean Study Website <span style='font-size: 12px;'>🌐</span>
     </a>
 </div>
 """, unsafe_allow_html=True)
