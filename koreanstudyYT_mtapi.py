@@ -8,7 +8,6 @@ from googletrans import Translator
 import os
 import re
 
-
 # Set up logging
 import logging
 logging.basicConfig(level=logging.INFO)
@@ -20,10 +19,27 @@ st.markdown("""
     .title {
         text-align: center;
     }
+    .video-examples-card {
+        border: 2px solid #667eea;
+        border-radius: 15px;
+        padding: 30px;
+        text-align: center;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        margin: 20px 0;
+    }
+    .feature-box {
+        background: white;
+        color: #667eea;
+        padding: 15px;
+        border-radius: 10px;
+        margin: 10px 0;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
 </style>
 """, unsafe_allow_html=True)
 
-# Load CSV data
+# Load CSV data for Quizlet
 @st.cache_data
 def load_csv_data():
     try:
@@ -47,41 +63,6 @@ def get_lesson_link(lesson):
     except Exception as e:
         logger.error(f"Error in get_lesson_link: {e}")
         return None, None
-
-# Load CSV data for YouTube
-@st.cache_data
-def load_grammar_csv_data():
-    try:
-        df = pd.read_csv('data/fcstr2.csv')  # Your YouTube CSV file
-        lesson_list = df['lesson'].unique().tolist()
-
-        return df, lesson_list
-    except Exception as e:
-        st.error(f"Error loading grammar CSV file: {e}")
-        return None, []
-
-df_grammar, lesson_list_grammar = load_grammar_csv_data()
-
-
-# YouTube
-def get_grammar_videos(lesson):
-    try:
-        videos_data = df_grammar[df_grammar['lesson'] == lesson]
-        grammar_points = []
-        videos_list = []
-        
-        
-        for index, row in videos_data.iterrows():
-            grammar_points.append(row['grammar_point'])
-            #videos_list.append((row['youtube_link'], row['timestamp']))
-            videos_list.append((row['youtube_link'], row['timestamp'], row['end']))
-           
-
-        return list(set(grammar_points)), videos_list
-    except Exception as e:
-        logger.error(f"Error getting videos: {e}")
-        return [], []
-
 
 def extract_video_id(url):
     try:
@@ -127,7 +108,6 @@ def translate_text(text):
         st.warning(f"Translation failed: {str(e)}")
         return "Translation not available"
 
-
 @st.cache_data(ttl=3600)
 def get_channel_videos(channel_id):
     try:
@@ -144,8 +124,6 @@ def get_channel_videos(channel_id):
         logger.error(f"Error fetching videos: {str(e)}")
         return []
 
-
-
 @st.cache_data(ttl=3600)
 def search_videos(query, channel_id):
     if not youtube:
@@ -160,7 +138,6 @@ def search_videos(query, channel_id):
     
     return all_videos[:5]  # Return top 5 here
 
-
 @st.cache_data(ttl=86400)
 def get_video_details(video_id):
     try:
@@ -174,19 +151,16 @@ def get_video_details(video_id):
         st.error(f"An error occurred while fetching details for video {video_id}: {str(e)}")
         return {'viewCount': '0'}
 
-
 # Function to format time from seconds to HH:MM:SS
 def format_time(seconds):
     minutes, seconds = divmod(int(seconds), 60)
     hours, minutes = divmod(minutes, 60)
     return f"{hours:02d}:{minutes:02d}:{seconds:02d}"
 
-
 # Function to embed YouTube video with HTML iframe starting at a specific timestamp
 def embed_youtube_video(video_id, start_time_seconds):
     youtube_url = f"https://www.youtube.com/embed/{video_id}?start={start_time_seconds}"
     video_html = f"""
-    
     <style>
     .video-container {{
         position: relative;
@@ -225,10 +199,25 @@ def display_video_segments(video_id, matches):
         embed_youtube_video(video_id, int(start_time))
 
 # Streamlit app setup with tabs for different sections
-#st.markdown("<h1 class='title'>한국어 단어와 문법</h1>", unsafe_allow_html=True)
-st.markdown("<h1 class='title' style='text-align: center; margin-bottom: -10px;'>한국어 단어와 문법</h1>", unsafe_allow_html=True)
-st.markdown("<div style='text-align: center; margin-top: -20px; position: relative;'><a href='https://mykoreanstudy.netlify.app/'>Visit My Korean Study Website</a></div>", unsafe_allow_html=True)
+st.markdown("<h1 class='title' style='text-align: center; font-size: 38px; margin-bottom: -10px;'>한국어 단어와 문법</h1>", unsafe_allow_html=True)
+
+st.markdown("""
+<div style='text-align: center; margin-top: -15px; margin-bottom: 25px; font-size: 16px;'>
+    <a href='https://mykoreanstudy.netlify.app/' target='_blank' style='
+        color: #667eea;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s ease;
+    ' onmouseover='this.style.color="#764ba2";' onmouseout='this.style.color="#667eea";'>
+        🌐Visit My Korean Study Website
+    </a>
+</div>
+""", unsafe_allow_html=True)
+
+
+# CHANGED: 3 tabs but Video Examples connects to external site
 tab1, tab2, tab3 = st.tabs(["Quizlet", "Video Examples", "YouTube Search"])
+
 
 with tab1:
     lesson = st.selectbox("Select a lesson", lesson_list)
@@ -236,85 +225,14 @@ with tab1:
         link, lesson_code = get_lesson_link(lesson)
         if link and lesson_code:
             st.markdown("Click: " f"[{lesson_code}]({link})", unsafe_allow_html=True)
-  
 
-# Selected Youtube Clips
+
 with tab2:
-   # Access code check at the start of tab2
-    passcode = st.text_input("Enter passcode", type="password", key="video_examples_passcode")
-    if not passcode:
-        st.warning("Please enter a passcode to view content")
-    elif passcode not in st.secrets["passcode"]:
-        st.error("Invalid passcode")
-    else:    
-
-        lesson = st.selectbox("Select lesson", lesson_list_grammar)
-
-        if lesson:
-            lesson_data = df_grammar[df_grammar['lesson'] == lesson]
-            grammar_points = lesson_data['grammar_point'].unique().tolist()
-            
-
-
-            if grammar_points:
-                selected_grammar = st.selectbox("Select grammar point", grammar_points)
-                if selected_grammar:
-                    videos = lesson_data[lesson_data['grammar_point'] == selected_grammar]
-                    if pd.isna(videos['youtube_link'].iloc[0]) or videos['youtube_link'].iloc[0] == "COMING_SOON":
-                        st.info("Video examples for this grammar point will be added soon!")
-                    else:
-
-                        for _, video in videos.iterrows():
-                            video_id = extract_video_id(video['youtube_link'])
-                            clean_video_id = video_id.split('?')[0].split('&')[0]
-                            
-                            video_url = f"https://www.youtube.com/embed/{video_id}&start={int(video['timestamp'])}&end={int(video['end'])}&loop=1"
-                            youtube_full_url = f"https://www.youtube.com/watch?v={video_id}&t={int(video['timestamp'])}s"
-
-                            # Create two columns for replay button and timestamp
-                            col1, col2 = st.columns([0.12, 1.8])  # Adjust ratio as needed
-                            with col1:
-                                if st.button("🔄", key=f"replay_{clean_video_id}_{video['timestamp']}"):
-                                    video_url = f"https://www.youtube.com/embed/{video_id}&start={int(video['timestamp'])}&end={int(video['end'])}&autoplay=1"
-                            with col2:
-                                st.markdown(f"<div style='padding-top: 5px;'>{video['time_format']}</div>", unsafe_allow_html=True)
-                                st.markdown(f"<div style='padding-top: 5px;'><a href='{youtube_full_url}' target='_blank'>Watch on YouTube</a></div>", unsafe_allow_html=True)
-                            
-                            # Video container
-                            video_html = f"""
-                            <style>
-                            .video-container {{
-                                position: relative;
-                                width: 100%;
-                                padding-bottom: 56.25%;
-                                margin-bottom: 20px;
-                            }}
-                            .video-container iframe {{
-                                position: absolute;
-                                top: 0;
-                                left: 0;
-                                width: 100%;
-                                height: 100%;
-                            }}
-                            </style>
-                            <div class="video-container">
-                                <iframe 
-                                    src="{video_url}" 
-                                    frameborder="0" 
-                                    allowfullscreen>
-                                </iframe>
-                            </div>
-                            """          
-                            
-                            st.markdown(video_html, unsafe_allow_html=True)
-                            
-                            # Show/Hide text buttons with cleaned ID
-                            if st.button("Show Korean", key=f"kor_{clean_video_id}_{video['timestamp']}"):
-                                st.write(f"**Korean:** {video['korean_text']}")
-                            if st.button("Show English", key=f"eng_{clean_video_id}_{video['timestamp']}"):
-                                st.write(f"**English:** {video['english_text']}")
-
-
+    st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
+    st.info("🚀 **Video Examples have moved to a dedicated site for better performance!**")   
+    st.markdown("###### [📺 Click here to access Video Examples](https://mykoreanstudy.netlify.app/videos)")
+    st.markdown("</div>", unsafe_allow_html=True)
+    
 
 with tab3:
     st.markdown("""
@@ -419,7 +337,6 @@ with tab3:
                     st.error(f"An error occurred: {str(e)}")
             else:
                 st.write("Please enter both a YouTube link and a search term.")
-
 
 
 
