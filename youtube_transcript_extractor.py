@@ -17,7 +17,6 @@ if 'extracted_data' not in st.session_state:
 if 'current_video_id' not in st.session_state:
     st.session_state.current_video_id = ""
 
-# Custom CSS
 st.markdown("""
 <style>
     .title {
@@ -37,6 +36,7 @@ st.markdown("""
         border-radius: 8px;
         padding: 15px;
         margin: 10px 0;
+        color: #155724 !important;
     }
     .info-box {
         background-color: #d1ecf1;
@@ -44,6 +44,7 @@ st.markdown("""
         border-radius: 8px;
         padding: 15px;
         margin: 10px 0;
+        color: #0c5460 !important;
     }
     .warning-box {
         background-color: #fff3cd;
@@ -51,9 +52,31 @@ st.markdown("""
         border-radius: 8px;
         padding: 15px;
         margin: 10px 0;
+        color: #856404 !important;
     }
     
-    /* Remove red focus/hover color from input fields */
+    @media (prefers-color-scheme: dark) {
+        .info-box {
+            background-color: #1a4851 !important;
+            border: 1px solid #3c7a89 !important;
+            color: #b8e6f0 !important;
+        }
+        .warning-box {
+            background-color: #4a3f1a !important;
+            border: 1px solid #8a7635 !important;
+            color: #f5e79e !important;
+        }
+        .success-box {
+            background-color: #1a3d1a !important;
+            border: 1px solid #4a7c59 !important;
+            color: #b8e6c1 !important;
+        }
+    }
+    
+    .info-box *, .warning-box *, .success-box * {
+        color: inherit !important;
+    }
+    
     .stTextInput > div > div > input {
         border-color: #ced4da !important;
     }
@@ -300,10 +323,9 @@ def check_available_captions(video_id):
 
 # Main Streamlit Interface
 def main():
-    st.markdown("<h1 class='title'>🎯 YouTube Transcript Extractor</h1>", unsafe_allow_html=True)
+    st.markdown("<h3 class='title'>🎯 YouTube Transcript Extractor</h1>", unsafe_allow_html=True)
     st.markdown("<p style='text-align: center;'>Extract transcripts with timestamps from YouTube videos (any language)</p>", unsafe_allow_html=True)
-    
- 
+
     
     # Add info about the tool
     st.markdown("""
@@ -443,22 +465,7 @@ def main():
             save_transcript_options(st.session_state.extracted_data, video_title)
     
 
-    
-   # Installation instructions
-    with st.expander("🔧 Installation Instructions (First Time Setup)", expanded=False):
-        st.markdown("""
-        **If you're running this locally, you need to install the required packages first:**
-        
-        ```bash
-        pip install streamlit pandas youtube-transcript-api
-        ```
-        
-        **Then run the app:**
-        ```bash
-        streamlit run app.py
-        ```
 
-        """)
 
 if __name__ == "__main__":
     main()
