@@ -184,7 +184,7 @@ def save_transcript_options(transcript_data, video_title="Unknown"):
         return None
     
     st.markdown("### 📥 Download Options")
-    st.markdown("*Download buttons will remain available until you enter a new video URL*")
+
     
     # Create different format options
     col1, col2, col3 = st.columns(3)
